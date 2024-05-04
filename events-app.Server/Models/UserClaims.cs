@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace SistemaMEAL.Server.Models
+namespace events_app.Server.Models
 {
     public class UserClaims
     {

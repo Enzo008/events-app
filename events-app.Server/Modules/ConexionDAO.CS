@@ -1,6 +1,6 @@
 using Microsoft.Data.SqlClient;
 
-namespace SistemaMEAL.Server.Modules
+namespace events_app.Server.Modules
 {
     public class ConexionDAO
     {

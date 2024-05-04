@@ -1,7 +1,10 @@
+import { Link } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import Notiflix from "notiflix";
 import { AuthContext } from '../../context/AuthContext';
 import { useContext } from 'react';
+import portada from '../../img/portada-login2.webp';
+import EventIcon from '../../icons/EventIcon';
 
 const Login = () => {
     // Variables State AuthContext 
@@ -11,13 +14,8 @@ const Login = () => {
     // Propiedades Form Principal
     const { 
         register, 
-        watch, 
         handleSubmit, 
         formState: { errors, dirtyFields, isSubmitted }, 
-        reset, 
-        setValue, 
-        trigger,
-        setFocus
     } = useForm({ mode: "onChange" });
 
     const onSubmit = async(data) => {
@@ -46,6 +44,7 @@ const Login = () => {
                 return;
             }
             
+            localStorage.setItem('token', dataRes.result);
             setUserLogged(dataRes.user);
         } catch (error) {
             console.error(`Error al hacer la solicitud: ${error}`);
@@ -55,64 +54,75 @@ const Login = () => {
     }
 
     return (
-        <div className="login-container Phone_12 flex flex-row todos">
-            <section className='Phone_6'>
-                {/* Imagen o algo */}
+        <div className="login-container h-100 Phone_12 flex flex-row">
+            <section className='portada-login Phone_6'>
+                <img src={portada} alt="Portada Login" />
             </section>
-            <section className='Phone_6 flex ai-center jc-center'>
+            <section className='Phone_6 flex ai-center jc-center flex-column'>
+                <span className='flex ai-center jc-center f5 gap-1'>
+                    <EventIcon /> 
+                    <h1 className='f3'>
+                        EVENT GLOW
+                    </h1>
+                </span>
                 <form
-                    className='Phone_8 p1 flex flex-column gap-1 jc-center ai-center'
+                    className='Phone_8 p2 flex flex-column gap-1 jc-center ai-center'
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     <div>
-                        <label htmlFor="usuCorEle" className="">
-                            Correo Electrónico:
-                        </label>
-                        <input 
+                        <input
                             type="text" 
                             id="usuCorEle"
                             className={`input-${dirtyFields.usuCorEle || isSubmitted ? (errors.usuCorEle ? 'invalid' : 'valid') : ''}`} 
                             autoComplete='off'
                             maxLength={50}
+                            placeholder='Ingresa tu Correo Electrónico'
                             {...register('usuCorEle', { 
-                                required: 'El campo es requerido.',
+                                required: 'El campo es obligatorio.',
+                                pattern: {
+                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                                    message: 'Dirección de correo electrónico inválido.',
+                                },
                             })} 
                         />
                         {errors.usuCorEle ? (
                             <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.usuCorEle.message}</p>
                         ) : (
-                            <p style={{ visibility: "hidden" }}>
+                            <p className="Large-f_75 Medium-f1 f_75 message-invalid" style={{ visibility: "hidden" }}>
                                 Espacio reservado para el mensaje de error
                             </p>
                         )}
                     </div>
                     <div>
-                        <label htmlFor="usuPas" className="">
-                            Contraseña:
-                        </label>
                         <input 
-                            type="text" 
+                            type="password" 
                             id="usuPas"
                             className={`input-${dirtyFields.usuPas || isSubmitted ? (errors.usuPas ? 'invalid' : 'valid') : ''}`} 
                             autoComplete='off'
                             maxLength={50}
+                            placeholder='Ingresa tu Contraseña'
                             {...register('usuPas', { 
-                                required: 'El campo es requerido.',
+                                required: 'El campo es obligatorio.',
                             })} 
                         />
                         {errors.usuPas ? (
-                            <p className="Large-f_75 Medium-f1 f_75 PowerMas_Message_Invalid">{errors.usuPas.message}</p>
+                            <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.usuPas.message}</p>
                         ) : (
-                            <p className="Large-f_75 Medium-f1 f_75 PowerMas_Message_Invalid" style={{ visibility: "hidden" }}>
+                            <p className="Large-f_75 Medium-f1 f_75 message-invalid" style={{ visibility: "hidden" }}>
                                 Espacio reservado para el mensaje de error
                             </p>
                         )}
                     </div>
+                    <div className="login-links flex flex-row jc-space-between">
+                        <Link to='/register'>¿Olvidaste tu contraseña?</Link>
+                        <Link to='/register'>¿No tienes una cuenta? Registrate</Link>
+                    </div>
+                    <br />
                     <button
-                        className='Phone_6'
+                        className='Phone_6 p_5 bold f1_25'
                         type='submit'
                     >
-                        Ingresar
+                        Iniciar Sesión
                     </button>
                 </form>
             </section>

@@ -1,4 +1,35 @@
+@font-face {
+	font-family: "HankenGrotesk";
+	font-style: normal;
+	font-weight: 400;
+	src: local("HankenGrotesk"), local("HankenGrotesk"),
+		url("../fonts/HankenGrotesk.ttf") format("truetype");
+	font-display: swap;
+}
 
+:root {
+	--palet-a: #DFEAFF;
+	--palet-b: #161C28;
+	--palet-c: #FFFFFF;
+	--palet-d: #ECECEC;
+	--palet-e: #F2CA2C;
+}
+
+a {
+	text-decoration: none;
+	font-style: none;
+}
+
+
+body{
+	font-family: HankenGrotesk;
+}
+.h-100{
+	height: 100vh;
+}
+.overflow-auto{
+	overflow: auto;
+}
 .todos *{
 	border: 1px solid black!important;
 }
@@ -13,13 +44,11 @@ form > div {
 	background: #fff url("../img/input-error.svg") no-repeat 98% center;
 	background-size: 20px 20px;
 	background-position: 98%;
-	border: 1px solid #E5554F!important;
 }
 .input-valid {
 	background: #fff url("../img/input-correct.svg") no-repeat 98% center;
 	background-size: 24px 24px;
 	background-position: 98%;
-	border: 1px solid #25848F!important;
 }
 
 .message-invalid{
@@ -27,12 +56,90 @@ form > div {
 	margin-top: 3px;
 }
 
-input[type=text], select{
+input[type=text], input[type=password], select{
 	outline: none;
 }
 
 
-
 .login-container{
-    height: 100vh;
+	background-color: var(--palet-b);
+	color: var(--palet-c);
+}
+
+.login-container input{
+	background-color: transparent;
+	border: none;
+	border-bottom: 2px solid #FFFFFF;
+	color: var(--palet-c);
+	padding: 0.5rem 0;
+}
+
+.login-container button{
+	border: 2px solid var(--palet-c);
+	background-color: transparent;
+	color: var(--palet-c);
+	transition: all 0.2s ease;
+}
+.login-container button:hover{
+	border: 2px solid var(--palet-a);
+	background-color: var(--palet-a);
+	color: var(--palet-b);
+}
+
+.login-links a{
+	color: var(--palet-c);
+}
+
+.login-links a:hover{
+	text-decoration: underline;
+}
+
+.portada-login{
+	overflow: hidden;
+}
+
+.portada-login img{
+	object-fit: cover;
+	object-position: center;
+	height: 100%;
+}
+
+.layout-container{
+	background-color: var(--palet-d);
+}
+
+.sidebar-container{
+	background-color: var(--palet-b);
+	color: var(--palet-c);
+}
+.sidebar-container a{
+	color: var(--palet-c);
+}
+.sidebar-container a:hover{
+	color: var(--palet-a);
+}
+div[data-active="true"] > div.sub-menu {
+    max-height: 500px;
+    padding-left: 10px;
+}
+div[data-active="true"] > div > .arrow {
+    transform: rotate(90deg);
+}
+
+.arrow {
+	transition: transform 0.3s ease;
+	cursor: pointer;
+}
+
+
+.sub-menu {
+    max-height: 0;
+    overflow: hidden;
+    width: 100%;
+    transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+
+.active_menu{
+	color: var(--palet-e)!important;
+	font-weight: bold;
 }

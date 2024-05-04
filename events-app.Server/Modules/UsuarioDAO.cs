@@ -1,11 +1,11 @@
 ﻿using Microsoft.Data.SqlClient;
-using SistemaMEAL.Server.Models;
+using events_app.Server.Models;
 using System.Data;
 using System.Text;
 using System.Security.Claims;
 using System.Transactions;
 
-namespace SistemaMEAL.Server.Modules
+namespace events_app.Server.Modules
 {
     public class UsuarioDAO
     {

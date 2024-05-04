@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SistemaMEAL.Server.Modules;
+using events_app.Server.Modules;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace SistemaMEAL.Server.Models
+namespace events_app.Server.Models
 {
     public class Jwt
     {

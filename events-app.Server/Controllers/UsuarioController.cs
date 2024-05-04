@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using SistemaMEAL.Server.Models;
+using events_app.Server.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Security.Cryptography;
-using SistemaMEAL.Server.Modules;
+using events_app.Server.Modules;
 
-namespace SistemaMEAL.Server.Controllers
+namespace events_app.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

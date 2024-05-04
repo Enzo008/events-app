@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using SistemaMEAL.Server.Modules;
+using events_app.Server.Modules;
 using System.Text;
+using events_app.Modulos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 // Servicios para los Modulos DAO
 builder.Services.AddScoped<UsuarioDAO>();
+builder.Services.AddScoped<MenuDAO>();
 
 // Configuracion seguridad JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -33,8 +35,8 @@ var app = builder.Build();
 // Agregamos CORS
 app.UseCors(policy =>
     policy.WithOrigins(builder.Configuration["CORS_ORIGIN"]) 
-          .AllowAnyMethod()
-          .AllowAnyHeader());
+        .AllowAnyMethod()
+        .AllowAnyHeader());
 
 
 app.MapControllers();

@@ -40,6 +40,10 @@
   display: table-cell;
 }
 
+.flex-grow-1{
+  flex-grow: 1;
+}
+
 /* Técnica 4 display:flex; */
 .flex {
   display: -webkit-box;

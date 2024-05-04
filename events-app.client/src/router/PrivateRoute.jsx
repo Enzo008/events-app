@@ -4,7 +4,9 @@ import { AuthContext } from '../context/AuthContext';
 
 const PrivateRoute = ({ children }) => {
     const { authInfo } = useContext(AuthContext);
-    const { userLogged } = authInfo;
+    const { userLogged, cargando } = authInfo;
+
+    if (cargando) return <p> Cargando... </p>;
 
     return (
         <>

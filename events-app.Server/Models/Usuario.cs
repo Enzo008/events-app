@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SistemaMEAL.Server.Models
+namespace events_app.Server.Models
 {
     public class Usuario
     {
