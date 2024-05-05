@@ -9,22 +9,21 @@ const componentMap = {
     'SquareIcon': SquareIcon,
 };
 
-
 const MenuItem = ({ menu, level }) => {
     const Icono  = componentMap[menu.menIco.trim()];
-    console.log(menu.menIco)
+    
     const match = useMatch(menu.menRef === '#' || menu.menRef === '' ? '#' : `/${menu.menRef}`);
     const isActive = match ? 'active_menu' : '';
     const [isOpen, setIsOpen] = useState(false);
+
     const toggleActive = (event) => {
         event.stopPropagation();
-        setIsOpen(!isOpen); // Cambia el estado de isOpen cada vez que se hace clic en el menú
+        setIsOpen(!isOpen);
     };
     
-    const indentation = level * 10;
-    
     return (
-        <div 
+        <div
+            style={{borderBottom: '1px solid var(--palet-c)'}}
             onClick={toggleActive} 
             data-active={isOpen ? 'true' : 'false'} // Añade un atributo de datos personalizado
             key={menu.menCod}

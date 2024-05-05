@@ -6,6 +6,7 @@ import PrivateRoute from './router/PrivateRoute';
 import Home from './pages/Home/Home';
 import Layout from './pages/Layout/Layout';
 import EventForm from './pages/Event/EventForm';
+import ForgotPasswordForm from './pages/Login/components/ForgotPasswordForm';
 
 const App = () => {
     return (
@@ -18,6 +19,11 @@ const App = () => {
                         </PublicRoute>
                     }/>
                     <Route path='/register' element={
+                        <PublicRoute>
+                            <Login />
+                        </PublicRoute>
+                    }/>
+                    <Route path='/forgot-password' element={
                         <PublicRoute>
                             <Login />
                         </PublicRoute>

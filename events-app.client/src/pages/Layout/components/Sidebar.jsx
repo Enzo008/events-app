@@ -3,13 +3,13 @@ import { AuthContext } from '../../../context/AuthContext';
 import EventIcon from '../../../icons/EventIcon';
 import Notiflix from 'notiflix';
 import MenuItem from './MenuItem';
-import { NavLink, useMatch } from 'react-router-dom';
+import { Link, NavLink, useMatch, useNavigate } from 'react-router-dom';
 import HomeIcon from '../../../icons/HomeIcon';
+import masculino from '../../../img/avatar_masculino.svg';
+import femenino from '../../../img/avatar_femenino.svg';
+import ArrowIcon from '../../../icons/ArrowIcon';
 
 const groupByParent = (menuData) => {
-    console.log(menuData)
-    // Primero, creamos un objeto donde las claves son los códigos de los menús (menCod)
-    // y los valores son los elementos del menú correspondientes.
     const menuMap = menuData.reduce((map, item) => {
         map[item.menCod] = { ...item, subMenus: [] };
         return map;
@@ -32,13 +32,13 @@ const groupByParent = (menuData) => {
 };
 
 const Sidebar = () => {
+    const navigate = useNavigate();
     // Estados del AuthContext
     const { authActions, authInfo } = useContext(AuthContext);
-    const { setIsLoggedIn, setMenuData } = authActions;
+    const { setUserLogged, setMenuData } = authActions;
     const { userLogged, menuData  } = authInfo;
     // Estados local - useState
     const [ menuGroup, setMenuGroup ] = useState([])
-    
 
     useEffect(() => {
         const fetchMenuData = async () => {
@@ -46,8 +46,6 @@ const Sidebar = () => {
                 Notiflix.Loading.pulse('Cargando...');
                 // Storage
                 const token = localStorage.getItem('token');
-                const usuAno = userLogged.usuAno;
-                const usuCod = userLogged.usuCod;
     
                 try {
                     const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/Menu`, {
@@ -58,7 +56,7 @@ const Sidebar = () => {
                     if (!response.ok) {
                         const data = await response.json();
                         if (data.result) {
-                            setIsLoggedIn(false);
+                            setUserLogged(null);
                         }
             
                         Notiflix.Notify.failure(data.message);
@@ -91,16 +89,56 @@ const Sidebar = () => {
     const match = useMatch('/'); // Comprueba si la ruta actual es la página de inicio
     const isHome = match ? 'active_menu' : '';
 
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleActive = (event) => {
+        event.stopPropagation();
+        setIsOpen(!isOpen);
+    };
+
+    useEffect(() => {
+        // Función para manejar los clics en el documento
+        const handleDocumentClick = (event) => {
+            // Comprueba si el clic fue dentro del menú desplegable
+            const clickedInsideMenu = event.target.closest('.dropdown_menu');
+            if (!clickedInsideMenu) {
+                // Si el clic fue fuera del menú desplegable, cierra el menú
+                setIsOpen(false);
+            }
+        };
+    
+        // Añade el detector de clics al documento
+        document.addEventListener('click', handleDocumentClick);
+    
+        // Limpia el detector de clics cuando el componente se desmonta
+        return () => {
+            document.removeEventListener('click', handleDocumentClick);
+        };
+    }, []);
+
+    const CerrarSesion = () => {
+        setUserLogged(null)
+        localStorage.removeItem('token');
+    }
+    
+    
     return (
-        <div className='sidebar-container Medium_2 flex flex-column'>
+        <div 
+            className='sidebar-container Medium_2 flex flex-column'
+            data-active={isOpen ? 'true' : 'false'}
+        >
             <div className='flex ai-center jc-center f2_5 gap-1 p1'>
                 <EventIcon /> 
-                <h1 className='f1_75'>
+                <h1 className='f1_5'>
                     EVENT GLOW
                 </h1>
             </div>
             <div className='sidebar-menus flex-grow-1'>
-                <NavLink className={`${isHome} flex ai-center gap-1 p_5`} to='/'>
+                <NavLink
+                    style={{borderBottom: '1px solid var(--palet-c)',borderTop: '1px solid var(--palet-c)'}}
+                    className={`${isHome} flex ai-center gap-1 p_5`} 
+                    to='/'
+                >
                     <span className='f1_25 flex ai-center jc-center'>
                         <HomeIcon />
                     </span>
@@ -109,6 +147,32 @@ const Sidebar = () => {
                 {menuGroup.map((menuItem, index) => (
                     <MenuItem key={index} menu={menuItem} level={0} />
                 ))}
+            </div>
+            <div className="sidebar_profile flex ai-center p_5 gap_5">
+                <div className="profile_picture">
+                    <img 
+                        src={userLogged && (userLogged.usuAva ? `data:image/jpeg;base64,${userLogged.usuAva}` : (userLogged.usuSex == 'M' ? masculino : femenino ))} 
+                        alt="Descripción de la imagen" 
+                    />
+                </div>
+                <div className="flex flex-column flex-grow-1">
+                    <span style={{textTransform: 'capitalize', borderBottom: '1px solid var(--palet-c)', marginBottom: '0.25rem', paddingBottom: '0.25rem'}} className="PowerMas_Username Large-f1 Medium-f1 Small-f_75">{userLogged  ? `${userLogged.usuNom.toLowerCase()} ${userLogged.usuApe.toLowerCase()}` : ''}</span>
+                    <span style={{textTransform: 'capitalize'}}  className="PowerMas_UserRole Large-f_75 Medium-f_75 Small-f_5">{userLogged  ? userLogged.rolNom.toLowerCase() : ''}</span>
+                </div>
+                <span 
+                    className="arrow_profile f1_5 flex ai-center jc-center"
+                    onClick={toggleActive}
+                > 
+                    <ArrowIcon />
+                </span>
+                {
+                    isOpen &&
+                    <div className='dropdown_menu'>
+                        <a href="#">Perfil</a>
+                        <hr className='m0' />
+                        <Link to='/login' onClick={CerrarSesion}>Cerrar sesión</Link>
+                    </div>
+                }
             </div>
         </div>
     )

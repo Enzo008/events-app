@@ -111,12 +111,14 @@ input[type=text], input[type=password], select{
 .sidebar-container{
 	background-color: var(--palet-b);
 	color: var(--palet-c);
+	
 }
-.sidebar-container a{
+.sidebar-menus a{
 	color: var(--palet-c);
+	transition: all 0.3s ease;
 }
-.sidebar-container a:hover{
-	color: var(--palet-a);
+.sidebar-menus a:hover{
+	color: var(--palet-e);
 }
 div[data-active="true"] > div.sub-menu {
     max-height: 500px;
@@ -125,8 +127,11 @@ div[data-active="true"] > div.sub-menu {
 div[data-active="true"] > div > .arrow {
     transform: rotate(90deg);
 }
+div[data-active="true"] > div > .arrow_profile {
+    transform: rotate(-90deg);
+}
 
-.arrow {
+.arrow, .arrow_profile {
 	transition: transform 0.3s ease;
 	cursor: pointer;
 }
@@ -142,4 +147,36 @@ div[data-active="true"] > div > .arrow {
 .active_menu{
 	color: var(--palet-e)!important;
 	font-weight: bold;
+}
+.sidebar_profile{
+	position: relative;
+}
+.profile_picture {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background: var(--palet-d); /* Reemplaza esto con la imagen de perfil */
+	overflow: hidden;
+}
+
+.dropdown_menu {
+    position: absolute;
+    bottom: 100%;
+	right: 10px;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--palet-c);
+	border: 1px solid var(--palet-d);
+	border-radius: 5px;
+}
+.dropdown_menu a{
+	color: var(--palet-b);
+	padding: 0.5rem;
+	transition: all 0.2s ease;
+}
+.dropdown_menu a:hover{
+	background-color: var(--palet-d);
+}
+.dropdown_menu hr{
+	border: 1px solid var(--palet-d);
 }
