@@ -25,14 +25,11 @@ namespace events_app.Server.Controllers
         [HttpPost]
         public dynamic Insertar(Usuario usuario)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var rToken = Jwt.validarToken(identity, _usuarios);
-
-            if (!rToken.success) return rToken;
+            string? passwordHash = usuario.UsuPas;
 
             using (SHA256 sha256Hash = SHA256.Create())
             {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(usuario.UsuPas.ToLower()));
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(usuario.UsuPas));
                 StringBuilder builder = new StringBuilder();
                 for (int i = 0; i < bytes.Length; i++)
                 {
@@ -41,7 +38,9 @@ namespace events_app.Server.Controllers
                 usuario.UsuPas = builder.ToString();
             }
 
-            var (usuAno, usuCod, message, messageType) = _usuarios.Insertar(identity, usuario);
+            Console.WriteLine(passwordHash);
+
+            var (usuAno, usuCod, message, messageType) = _usuarios.Insertar(usuario);
             if (messageType == "1") // Error
             {
                 return new BadRequestObjectResult(new { success = false, message });
@@ -52,7 +51,9 @@ namespace events_app.Server.Controllers
             }
             else // Registro modificado correctamente
             {
-                return new OkObjectResult(new { usuAno, usuCod, success = true, message });
+                usuario.UsuPas = passwordHash;
+                var loginResult = IniciarSesion(usuario);
+                return loginResult;
             }
         }
 
@@ -249,7 +250,6 @@ namespace events_app.Server.Controllers
         [Route("login")]
         public dynamic IniciarSesion(Usuario usuario)
         {
-            Console.WriteLine(usuario.UsuPas);
             // Haz hash de la contraseña proporcionada
             using (SHA256 sha256Hash = SHA256.Create())
             {
@@ -261,6 +261,7 @@ namespace events_app.Server.Controllers
                 }
                 usuario.UsuPas = builder.ToString();
             }
+
             // Recorrer usuarios y validar si hay un usuario con ese email
             var usuarioValidado = _usuarios.ValidarUsuario(usuario.UsuCorEle, usuario.UsuPas).FirstOrDefault();
             if (usuarioValidado.UsuAno == null)
@@ -286,7 +287,7 @@ namespace events_app.Server.Controllers
                 new Claim(JwtRegisteredClaimNames.Iat, secondsSinceEpoch.ToString(), ClaimValueTypes.Integer64),
                 new Claim("USUANO", usuarioValidado.UsuAno),
                 new Claim("USUCOD", usuarioValidado.UsuCod),
-                new Claim("USUIP", usuario.Ip), // Asegúrate de que 'Ip' es el nombre correcto del campo
+                new Claim("USUIP", usuario.UsuIp),
                 new Claim("USUNOM", usuarioValidado.UsuNom),
                 new Claim("USUAPE", usuarioValidado.UsuApe),
                 new Claim("USUNOMUSU", usuarioValidado.UsuNomUsu)

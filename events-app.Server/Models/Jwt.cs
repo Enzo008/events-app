@@ -88,7 +88,7 @@ namespace events_app.Server.Models
             var cod = identity.Claims.FirstOrDefault(x => x.Type == "USUCOD")?.Value;
 
             // Buscar usuario
-            var usuario = usuarios.BuscarUsuario(ano, cod);
+            var usuario = usuarios.BuscarUsuario(ano, cod).FirstOrDefault();
             if (usuario == null)
             {
                 return new

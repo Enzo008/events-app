@@ -35,22 +35,18 @@ namespace events_app.Server.Modules
                 // Aquí debes agregar todos los parámetros que necesita tu procedimiento almacenado
                 cmd.Parameters.AddWithValue("@P_USUANO", usuario.UsuAno);
                 cmd.Parameters.AddWithValue("@P_USUCOD", usuario.UsuCod);
-                cmd.Parameters.AddWithValue("@P_DOCIDECOD", usuario.DocIdeCod);
                 cmd.Parameters.AddWithValue("@P_USUNUMDOC", usuario.UsuNumDoc);
                 cmd.Parameters.AddWithValue("@P_USUNOM", usuario.UsuNom);
                 cmd.Parameters.AddWithValue("@P_USUAPE", usuario.UsuApe);
                 cmd.Parameters.AddWithValue("@P_USUFECNAC", usuario.UsuFecNac);
                 cmd.Parameters.AddWithValue("@P_USUSEX", usuario.UsuSex);
                 cmd.Parameters.AddWithValue("@P_USUCORELE", usuario.UsuCorEle);
-                cmd.Parameters.AddWithValue("@P_CARCOD", usuario.CarCod);
                 cmd.Parameters.AddWithValue("@P_USUFECINC", usuario.UsuFecInc);
                 cmd.Parameters.AddWithValue("@P_USUTEL", usuario.UsuTel);
                 cmd.Parameters.AddWithValue("@P_USUNOMUSU", usuNomUsu);
                 cmd.Parameters.AddWithValue("@P_USUPAS", usuario.UsuPas);
                 cmd.Parameters.AddWithValue("@P_USUEST", usuario.UsuEst);
                 cmd.Parameters.AddWithValue("@P_ROLCOD", usuario.RolCod);
-                cmd.Parameters.AddWithValue("@P_UBIANO", usuario.UbiAno);
-                cmd.Parameters.AddWithValue("@P_UBICOD", usuario.UbiCod);
                 cmd.Parameters.AddWithValue("@P_USUMOD", userClaims.UsuNomUsu);
                 cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
                 cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
@@ -254,20 +250,16 @@ namespace events_app.Server.Modules
         //     return (mensaje, tipoMensaje, user);
         // }
 
-        public (string? message, string? messageType, string? usuAnoOut, string? usuCodOut) Insertar(ClaimsIdentity? identity, Usuario usuario)
+        public (string? mensaje, string? tipoMensaje, string? usuAnoOut, string? usuCodOut) Insertar(Usuario usuario)
         {
-            var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
-
             string? mensaje = "";
             string? tipoMensaje = "";
             string? usuAnoOut = "";
             string? usuCodOut = "";
+            
             try
             {
                 cn.getcn.Open();
-
-                // Obtén la fecha actual y formátala como una cadena en el formato "dd-MM-yyyy"
-                string fechaActual = DateTime.Now.ToString("dd-MM-yyyy");
 
                 // Obtén el primer carácter de usuario.usuNom
                 string? primerCaracterUsuNom = usuario.UsuNom?.Substring(0, 1);
@@ -281,28 +273,20 @@ namespace events_app.Server.Modules
                 SqlCommand cmd = new SqlCommand("SP_INSERTAR_USUARIO", cn.getcn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@P_DOCIDECOD", usuario.DocIdeCod);
                 cmd.Parameters.AddWithValue("@P_USUNUMDOC", usuario.UsuNumDoc);
                 cmd.Parameters.AddWithValue("@P_USUNOM", usuario.UsuNom);
                 cmd.Parameters.AddWithValue("@P_USUAPE", usuario.UsuApe);
-                cmd.Parameters.AddWithValue("@P_USUFECNAC", usuario.UsuFecNac);
                 cmd.Parameters.AddWithValue("@P_USUSEX", usuario.UsuSex);
                 cmd.Parameters.AddWithValue("@P_USUCORELE", usuario.UsuCorEle);
-                cmd.Parameters.AddWithValue("@P_CARCOD", usuario.CarCod);
-                cmd.Parameters.AddWithValue("@P_USUFECINC", fechaActual);
                 cmd.Parameters.AddWithValue("@P_USUTEL", usuario.UsuTel);
                 cmd.Parameters.AddWithValue("@P_USUNOMUSU", usuNomUsu);
                 cmd.Parameters.AddWithValue("@P_USUPAS", usuario.UsuPas);
-                cmd.Parameters.AddWithValue("@P_USUEST", usuario.UsuEst);
-                cmd.Parameters.AddWithValue("@P_ROLCOD", usuario.RolCod);
-                cmd.Parameters.AddWithValue("@P_UBIANO", usuario.UbiAno);
-                cmd.Parameters.AddWithValue("@P_UBICOD", usuario.UbiCod);
-                cmd.Parameters.AddWithValue("@P_USUING", userClaims.UsuNomUsu);
-                cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
-                cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
-                cmd.Parameters.AddWithValue("@P_USUCOD_U", userClaims.UsuCod);
-                cmd.Parameters.AddWithValue("@P_USUNOM_U", userClaims.UsuNom);
-                cmd.Parameters.AddWithValue("@P_USUAPE_U", userClaims.UsuApe);
+                cmd.Parameters.AddWithValue("@P_USUEST", "A");
+                cmd.Parameters.AddWithValue("@P_ROLCOD", "02");
+                cmd.Parameters.AddWithValue("@P_USUING", usuNomUsu);
+                cmd.Parameters.AddWithValue("@P_LOGIPMAQ", usuario.UsuIp);
+                cmd.Parameters.AddWithValue("@P_USUNOM_U", usuario.UsuNom);
+                cmd.Parameters.AddWithValue("@P_USUAPE_U", usuario.UsuApe);
 
                 SqlParameter pDescripcionMensaje = new SqlParameter("@P_DESCRIPCION_MENSAJE", SqlDbType.NVarChar, -1);
                 pDescripcionMensaje.Direction = ParameterDirection.Output;
@@ -571,7 +555,6 @@ namespace events_app.Server.Modules
                         UsuNomUsu = rd["USUNOMUSU"].ToString(),
                         UsuSex = rd["USUSEX"].ToString(),
                         UsuAva = rd.IsDBNull(rd.GetOrdinal("USUAVA")) ? null : rd.GetSqlBinary(rd.GetOrdinal("USUAVA")).Value,
-                        CarNom = rd["USUSEX"].ToString(),
                         RolCod = rd["ROLCOD"].ToString(),
                         RolNom = rd["ROLNOM"].ToString(),
                     };
@@ -659,7 +642,6 @@ namespace events_app.Server.Modules
                         UsuNomUsu = rd["USUNOMUSU"].ToString(),
                         UsuSex = rd["USUSEX"].ToString(),
                         UsuAva = rd.IsDBNull(rd.GetOrdinal("USUAVA")) ? null : rd.GetSqlBinary(rd.GetOrdinal("USUAVA")).Value,
-                        CarNom = rd["USUSEX"].ToString(),
                         RolCod = rd["ROLCOD"].ToString(),
                         RolNom = rd["ROLNOM"].ToString(),
                     };
