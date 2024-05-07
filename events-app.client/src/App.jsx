@@ -7,6 +7,7 @@ import Home from './pages/Home/Home';
 import Layout from './pages/Layout/Layout';
 import EventForm from './pages/Event/EventForm';
 import ForgotPasswordForm from './pages/Login/components/ForgotPasswordForm';
+import Events from './pages/Event/Events';
 
 const App = () => {
     return (
@@ -34,7 +35,7 @@ const App = () => {
                                 <Layout>
                                     <Routes>
                                         <Route index element={<Home />} />
-                                        <Route path='/event' element={<EventForm />} />
+                                        <Route path='/events' element={<Events />} />
                                         <Route path='/event-form/:id?' element={<EventForm />} />
                                         <Route path="*" element={<Navigate to='/' />} />
                                     </Routes>

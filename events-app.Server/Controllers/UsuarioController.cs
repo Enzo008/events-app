@@ -264,14 +264,12 @@ namespace events_app.Server.Controllers
 
             // Recorrer usuarios y validar si hay un usuario con ese email
             var usuarioValidado = _usuarios.ValidarUsuario(usuario.UsuCorEle, usuario.UsuPas).FirstOrDefault();
-            if (usuarioValidado.UsuAno == null)
+            if (usuarioValidado == null)
             {
-                return new
-                {
-                    success = false,
-                    message = "Credenciales incorrectas o usuario inactivo",
-                    result = ""
-                };
+                return new BadRequestObjectResult(new { 
+                    success = false, 
+                    message = "Credenciales incorrectas o usuario inactivo"
+                });
             }
 
             var jwt = _configuration.GetSection("Jwt").Get<Jwt>();

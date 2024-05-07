@@ -4,8 +4,10 @@ import { AuthContext } from '../context/AuthContext';
 
 const PublicRoute = ({ children }) => {
     const { authInfo } = useContext(AuthContext);
-    const { userLogged } = authInfo;
-        console.log(userLogged)
+    const { userLogged, cargando } = authInfo;
+
+    if (cargando) return <p> Cargando... </p>;
+
     return (
         <>
             {

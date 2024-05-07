@@ -56,10 +56,10 @@ form > div {
 	margin-top: 3px;
 }
 
-input[type=text], input[type=password], select{
+input, select, textarea, button{
 	outline: none;
+	border-radius: 5px;
 }
-
 
 .login-container{
 	background-color: var(--palet-b);
@@ -105,7 +105,6 @@ input[type=text], input[type=password], select{
 }
 
 .layout-container{
-	background-color: var(--palet-d);
 }
 
 .sidebar-container{
@@ -115,7 +114,7 @@ input[type=text], input[type=password], select{
 }
 .sidebar-menus a{
 	color: var(--palet-c);
-	transition: all 0.3s ease;
+	transition: color 0.3s ease;
 }
 .sidebar-menus a:hover{
 	color: var(--palet-e);
@@ -179,4 +178,96 @@ div[data-active="true"] > div > .arrow_profile {
 }
 .dropdown_menu hr{
 	border: 1px solid var(--palet-d);
+}
+
+
+.ReactModalPortal > div{
+    opacity: 0;
+}
+
+.ReactModalPortal .ReactModal__Overlay {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    transition: opacity .2s ease-in-out;
+    z-index: 999;
+}
+
+.modal-fondo {
+    background-color: rgba(0, 0, 0, 0.3);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    position: fixed;
+}
+
+.ReactModalPortal .ReactModal__Overlay--after-open {
+    opacity: 1;
+}
+
+.ReactModalPortal .ReactModal__Overlay--before-close {
+    opacity: 0;
+}
+
+.modal {
+    background: white;
+    border-radius: 5px;
+    color: rgb(51, 51, 51);
+    display: inline;
+    max-height: 100v;
+    max-width: 500px;
+    outline: none;
+    padding: 10px;
+}
+
+
+.rbc-toolbar-label,
+.rbc-header,
+.rbc-header button,
+.rbc-agenda-date-cell{
+  text-transform: capitalize;
+}
+
+
+button{
+	transition: all 0.2s ease-in-out;
+}
+.button-add{
+	background-color: #6a994e;
+	color: var(--palet-d);
+	border: 1px solid #6a994e;
+}
+.button-add:hover{
+	background-color: #588157;
+	border: 1px solid #588157;
+}
+.button-delete{
+	background-color: #ef233c;
+	color: var(--palet-d);
+	border: 1px solid #ef233c;
+}
+.button-delete:hover{
+	background-color: #d90429;
+	border: 1px solid #d90429;
+}
+.button-detail{
+	background-color: #eeba0b;
+	color: var(--palet-d);
+	border: 1px solid #eeba0b;
+}
+.button-detail:hover{
+	background-color: #cca000;
+	border: 1px solid #cca000;
+}
+
+.button-primary{
+	background-color: #293241;
+	border: 1px solid #293241;
+	color: var(--palet-d);
+}
+
+.button-primary:hover{
+	background-color: var(--palet-b);
+	border: 1px solid var(--palet-b);
 }

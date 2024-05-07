@@ -39,6 +39,7 @@ const LoginForm = () => {
             const dataRes = await response.json();
 
             if (!response.ok) {
+                console.log(dataRes)
                 Notiflix.Notify.failure(dataRes.message);
                 return;
             }

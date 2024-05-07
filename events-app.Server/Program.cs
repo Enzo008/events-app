@@ -13,7 +13,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 // Servicios para los Modulos DAO
 builder.Services.AddScoped<UsuarioDAO>();
+builder.Services.AddScoped<EventoDAO>();
 builder.Services.AddScoped<MenuDAO>();
+builder.Services.AddScoped<UbicacionDAO>();
 
 // Configuracion seguridad JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -52,7 +54,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
