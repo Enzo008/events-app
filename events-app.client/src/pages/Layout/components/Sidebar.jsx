@@ -134,16 +134,6 @@ const Sidebar = () => {
                 </h1>
             </div>
             <div className='sidebar-menus flex-grow-1'>
-                <NavLink
-                    style={{borderBottom: '1px solid var(--palet-c)',borderTop: '1px solid var(--palet-c)'}}
-                    className={`${isHome} flex ai-center gap-1 p_5`} 
-                    to='/'
-                >
-                    <span className='f1_25 flex ai-center jc-center'>
-                        <HomeIcon />
-                    </span>
-                    Home 
-                </NavLink>
                 {menuGroup.map((menuItem, index) => (
                     <MenuItem key={index} menu={menuItem} level={0} />
                 ))}

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import Notiflix from "notiflix";
 import { Link } from "react-router-dom";
 import EventIcon from '../../../icons/EventIcon';
+import { validateNoLeadingSpaces } from "../../../helpers/formValidation";
 
 const LoginForm = () => {
     // Variables State AuthContext 
@@ -102,6 +103,7 @@ const LoginForm = () => {
                         placeholder='Ingresa tu Contraseña'
                         {...register('usuPas', { 
                             required: 'El campo es obligatorio.',
+                            validate: validateNoLeadingSpaces
                         })} 
                     />
                     {errors.usuPas ? (

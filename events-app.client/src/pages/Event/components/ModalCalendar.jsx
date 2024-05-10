@@ -3,17 +3,12 @@ import Notiflix from "notiflix";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Modal from 'react-modal';
+import { validateNoLeadingSpaces } from "../../../helpers/formValidation";
 
 moment.locale('es');
 
 const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => {
     const [locations, setLocations] = useState([]);
-
-    const customStyles = {
-        content: {
-            padding: '2rem',
-        },
-    };
 
     const now = moment().minutes(0).seconds(0).add(1, 'hours').format('YYYY-MM-DDTHH:mm');
     const nowPlus1 = moment(now).add(1, 'hours').format('YYYY-MM-DDTHH:mm');
@@ -135,9 +130,6 @@ const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => 
         }
     }
 
-    
-    
-
     const closeModalAndReset = () => {
         closeModal();
         reset(initEvent);
@@ -147,7 +139,9 @@ const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => 
         <Modal
             isOpen={ isModalOpen }
             onRequestClose={ closeModalAndReset }
-            style={ customStyles }
+            style={{content: {
+                padding: '2rem',
+            }}}
             closeTimeoutMS={ 200 }
             ariaHideApp={false}
             className='modal'
@@ -171,6 +165,15 @@ const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => 
                         placeholder='Ingresa un nombre para el evento'
                         {...register('title', { 
                             required: 'El campo es obligatorio.',
+                            maxLength: {
+                                value: 50,
+                                message: 'El campo no puede tener más de 50 carácteres.'
+                            },
+                            minLength: {
+                                value: 3,
+                                message: 'El campo debe tener minímo 3 carácteres.'
+                            },
+                            validate: validateNoLeadingSpaces, 
                         })} 
                     />
                     {errors.title ? (
@@ -192,6 +195,15 @@ const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => 
                         placeholder='Ingresa una descripción para el evento'
                         {...register('desc', { 
                             required: 'El campo es obligatorio.',
+                            maxLength: {
+                                value: 100,
+                                message: 'El campo no puede tener más de 100 carácteres.'
+                            },
+                            minLength: {
+                                value: 3,
+                                message: 'El campo debe tener minímo 3 carácteres.'
+                            },
+                            validate: validateNoLeadingSpaces,
                         })} 
                     />
                     {errors.desc ? (
@@ -211,6 +223,9 @@ const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => 
                         autoComplete='off'
                         {...register('start', { 
                             required: 'El campo es obligatorio.',
+                            validate: {
+                                isFuture: value => moment(value).isAfter(moment().add(2, 'days')) || 'La fecha del evento debe ser con 2 dóas de anticipación.'
+                            }
                         })} 
                     />
                     {errors.start ? (
@@ -222,7 +237,7 @@ const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => 
                     )}
                 </div>
                 <div>
-                    <label htmlFor="ubiCod">Ubicaciones:</label>
+                    <label htmlFor="ubiCod">Ubicaciones Disponibles:</label>
                     <select 
                         id='ubiCod'
                         className={`input-${dirtyFields.ubiCod || isSubmitted ? (errors.ubiCod ? 'invalid' : 'valid') : ''}`} 
@@ -238,7 +253,7 @@ const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => 
                                 key={index} 
                                 value={item.ubiCod}
                             > 
-                                {item.ubiNom}
+                                {item.ubiNom} - {item.ubiCapPer} PERSONAS
                             </option>
                         ))}
                     </select>
@@ -257,7 +272,7 @@ const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => 
                         id="evePrePla"
                         className={`input-${dirtyFields.evePrePla || isSubmitted ? (errors.evePrePla ? 'invalid' : 'valid') : ''}`} 
                         autoComplete='off'
-                        maxLength={50}
+                        maxLength={10}
                         placeholder='Ingresa tu presupuesto'
                         onInput={(event) => {
                             // Reemplaza cualquier carácter que no sea un número por una cadena vacía
@@ -268,7 +283,11 @@ const ModalCalendar = ({isModalOpen, closeModal, selectedEvent, setRefresh}) => 
                             pattern: {
                                 value: /^[0-9]*$/,
                                 message: 'El campo solo debe contener números'
-                            }
+                            },
+                            maxLength: {
+                                value: 10,
+                                message: 'El campo no puede tener más de 10 carácteres.'
+                            },
                         })} 
                     />
                     {errors.evePrePla ? (

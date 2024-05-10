@@ -5,13 +5,59 @@ import PublicRoute from './router/PublicRoute';
 import PrivateRoute from './router/PrivateRoute';
 import Home from './pages/Home/Home';
 import Layout from './pages/Layout/Layout';
-import EventForm from './pages/Event/EventForm';
-import ForgotPasswordForm from './pages/Login/components/ForgotPasswordForm';
 import Events from './pages/Event/Events';
+import EventDetails from './pages/Event/components/EventDetails';
+import Material from './pages/Maintance/Material';
+import Supplier from './pages/Maintance/Supplier';
+import { AuthContext } from './context/AuthContext';
+import { useContext, useEffect, useState } from 'react';
+import Notiflix from 'notiflix';
 
 const App = () => {
+    const { authActions, authInfo } = useContext(AuthContext);
+    const { setMenuData } = authActions;
+    const { userLogged, menuData  } = authInfo;
+
+    useEffect(() => {
+        const fetchMenuData = async () => {
+            if (userLogged) {
+                Notiflix.Loading.pulse('Cargando...');
+                // Storage
+                const token = localStorage.getItem('token');
+    
+                try {
+                    const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/Menu`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (!response.ok) {
+                        const data = await response.json();
+                        Notiflix.Notify.failure(data.message);
+                        Notiflix.Loading.remove();
+                        return;
+                    }
+        
+                    const data = await response.json();
+                    console.log(data)
+                    setMenuData(data);
+                } catch (error) {
+                    console.error(error);
+                    Notiflix.Loading.remove();
+                }
+            }
+            Notiflix.Loading.remove();
+        };
+    
+        fetchMenuData();
+    }, [userLogged]);
+
+    const componentMap = {
+        'material': Material,
+        'supplier': Supplier,
+    };
+
     return (
-        <AuthState>
             <Router>
                 <Routes>
                     <Route path='/login' element={
@@ -30,22 +76,45 @@ const App = () => {
                         </PublicRoute>
                     }/>
                     <Route path='*' element={
+                        // <PrivateRoute>
+                        //     {
+                        //         <Layout>
+                        //             <Routes>
+                        //                 <Route index element={<Events />} />
+                        //                 <Route path='/event-details/:id' element={<EventDetails />} />
+                        //                 <Route path='/material' element={<Material />} />
+                        //                 <Route path='/supplier' element={<Supplier />} />
+                        //                 <Route path="*" element={<Navigate to='/' />} />
+                        //             </Routes>
+                        //         </Layout>
+                        //     }
+                        // </PrivateRoute>
                         <PrivateRoute>
-                            {
-                                <Layout>
+                        {
+                            userLogged &&
+                            <Layout>
                                     <Routes>
-                                        <Route index element={<Home />} />
-                                        <Route path='/events' element={<Events />} />
-                                        <Route path='/event-form/:id?' element={<EventForm />} />
+                                        <Route index element={<Events />} />
+                                        <Route path='/event-details/:id' element={<EventDetails />} />
+                                        {menuData.map((menu, index) => {
+                                            const Component = componentMap[menu.menRef];
+                                            return Component ? <Route path={`${menu.menRef}`} element={<Component />} key={index} /> : null;
+                                        })}
+                                        {/* {menuData.some(menu => menu.menRef === 'user') && (
+                                            <>
+                                                <Route path="form-user/:id?" element={<FormUser />} />
+                                                <Route path="menu-user/:id" element={<MenuUser />} />
+                                                <Route path="permiso-user/:id" element={<PermissionUser />} />
+                                            </>
+                                        )} */}
                                         <Route path="*" element={<Navigate to='/' />} />
                                     </Routes>
-                                </Layout>
-                            }
-                        </PrivateRoute>
+                            </Layout>
+                        }
+                    </PrivateRoute>
                     } />
                 </Routes>
             </Router>
-        </AuthState>
     )
 }
 

@@ -16,6 +16,10 @@ builder.Services.AddScoped<UsuarioDAO>();
 builder.Services.AddScoped<EventoDAO>();
 builder.Services.AddScoped<MenuDAO>();
 builder.Services.AddScoped<UbicacionDAO>();
+builder.Services.AddScoped<TareaDAO>();
+builder.Services.AddScoped<MaterialDAO>();
+builder.Services.AddScoped<ProveedorDAO>();
+builder.Services.AddScoped<ServicioDAO>();
 
 // Configuracion seguridad JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -56,7 +60,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 // MapFallbackToFile maneja las rutas desconocidas y las redirige a "/index.html",
 // permitiendo que tu aplicación de página única maneje el enrutamiento.

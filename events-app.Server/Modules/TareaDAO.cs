@@ -6,32 +6,33 @@ using System.Security.Claims;
 
 namespace events_app.Modulos
 {
-     public class EventoDAO
+     public class TareaDAO
     {
         private ConexionDAO cn = new ConexionDAO();
 
-        public IEnumerable<Evento> Buscar(ClaimsIdentity? identity, string? eveAno = null, string? eveCod = null, string? eveNom = null, string? eveDes = null, string? eveFec = null, string? eveHor = null, string? evePrePla = null, string? evePreEje = null, string? ubiCod = null, string? eveEst = null)
+        public IEnumerable<Tarea> Buscar(ClaimsIdentity? identity, string? tarAno = null, string? tarCod = null, string? tarNom = null, string? tarDes = null, string? tarFecIniPla = null, string? tarFecFinPla = null, string? tarFecIniEje = null, string? tarFecFinEje = null, string? tarEst = null, string? eveAno = null, string? eveCod = null)
         {
             var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
 
-            List<Evento> temporal = new List<Evento>();
+            List<Tarea> temporal = new List<Tarea>();
             try
             {
                 cn.getcn.Open();
 
-                SqlCommand cmd = new SqlCommand("SP_BUSCAR_EVENTO", cn.getcn);
+                SqlCommand cmd = new SqlCommand("SP_BUSCAR_TAREA", cn.getcn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
+                cmd.Parameters.AddWithValue("@P_TARANO", string.IsNullOrEmpty(tarAno) ? (object)DBNull.Value : tarAno);
+                cmd.Parameters.AddWithValue("@P_TARCOD", string.IsNullOrEmpty(tarCod) ? (object)DBNull.Value : tarCod);
+                cmd.Parameters.AddWithValue("@P_TARNOM", string.IsNullOrEmpty(tarNom) ? (object)DBNull.Value : tarNom);
+                cmd.Parameters.AddWithValue("@P_TARDES", string.IsNullOrEmpty(tarDes) ? (object)DBNull.Value : tarDes);
+                cmd.Parameters.AddWithValue("@P_TARFECINIPLA", string.IsNullOrEmpty(tarFecIniPla) ? (object)DBNull.Value : tarFecIniPla);
+                cmd.Parameters.AddWithValue("@P_TARFECFINPLA", string.IsNullOrEmpty(tarFecFinPla) ? (object)DBNull.Value : tarFecFinPla);
+                cmd.Parameters.AddWithValue("@P_TARFECINIEJE", string.IsNullOrEmpty(tarFecIniEje) ? (object)DBNull.Value : tarFecIniEje);
+                cmd.Parameters.AddWithValue("@P_TARFECFINEJE", string.IsNullOrEmpty(tarFecFinEje) ? (object)DBNull.Value : tarFecFinEje);
+                cmd.Parameters.AddWithValue("@P_TAREST", string.IsNullOrEmpty(tarEst) ? (object)DBNull.Value : tarEst);
                 cmd.Parameters.AddWithValue("@P_EVEANO", string.IsNullOrEmpty(eveAno) ? (object)DBNull.Value : eveAno);
                 cmd.Parameters.AddWithValue("@P_EVECOD", string.IsNullOrEmpty(eveCod) ? (object)DBNull.Value : eveCod);
-                cmd.Parameters.AddWithValue("@P_EVENOM", string.IsNullOrEmpty(eveNom) ? (object)DBNull.Value : eveNom);
-                cmd.Parameters.AddWithValue("@P_EVEDES", string.IsNullOrEmpty(eveDes) ? (object)DBNull.Value : eveDes);
-                cmd.Parameters.AddWithValue("@P_EVEFEC", string.IsNullOrEmpty(eveFec) ? (object)DBNull.Value : eveFec);
-                cmd.Parameters.AddWithValue("@P_EVEHOR", string.IsNullOrEmpty(eveHor) ? (object)DBNull.Value : eveHor);
-                cmd.Parameters.AddWithValue("@P_EVEPREPLA", string.IsNullOrEmpty(evePrePla) ? (object)DBNull.Value : evePrePla);
-                cmd.Parameters.AddWithValue("@P_EVEPREEJE", string.IsNullOrEmpty(evePreEje) ? (object)DBNull.Value : evePreEje);
-                cmd.Parameters.AddWithValue("@P_UBICOD", string.IsNullOrEmpty(ubiCod) ? (object)DBNull.Value : ubiCod);
-                cmd.Parameters.AddWithValue("@P_EVEEST", string.IsNullOrEmpty(eveEst) ? (object)DBNull.Value : eveEst);
                 cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
                 cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
                 cmd.Parameters.AddWithValue("@P_USUCOD_U", userClaims.UsuCod);
@@ -49,25 +50,26 @@ namespace events_app.Modulos
                 SqlDataReader rd = cmd.ExecuteReader();
                 while (rd.Read())
                 {
-                    Evento obj = new Evento
+                    Tarea obj = new Tarea
                     {
+                        TarAno = rd["TARANO"].ToString(),
+                        TarCod = rd["TARCOD"].ToString(),
+                        TarNom = rd["TARNOM"].ToString(),
+                        TarDes = rd["TARDES"].ToString(),
+                        TarFecIniPla = rd["TARFECINIPLA"].ToString(),
+                        TarFecFinPla = rd["TARFECFINPLA"].ToString(),
+                        TarFecIniEje = rd["TARFECINIEJE"].ToString(),
+                        TarFecFinEje = rd["TARFECFINEJE"].ToString(),
+                        TarEst = rd["TAREST"].ToString(),
                         EveAno = rd["EVEANO"].ToString(),
                         EveCod = rd["EVECOD"].ToString(),
-                        EveNom = rd["EVENOM"].ToString(),
-                        EveDes = rd["EVEDES"].ToString(),
-                        EveFec = rd["EVEFEC"].ToString(),
-                        EveHor = rd["EVEHOR"].ToString(),
-                        EvePrePla = rd["EVEPREPLA"].ToString(),
-                        EvePreEje = rd["EVEPREEJE"].ToString(),
-                        UbiCod = rd["UBICOD"].ToString(),
-                        UbiNom = rd["UBINOM"].ToString(),
                     };
                     temporal.Add(obj);
                 }
             }
             catch (SqlException ex)
             {
-                temporal = new List<Evento>();
+                temporal = new List<Tarea>();
                 Console.WriteLine(ex.Message);
             }
             finally
@@ -77,29 +79,30 @@ namespace events_app.Modulos
             return temporal;
         }
 
-        public (string? benAnoOut,string? benCodOut,string? message, string? messageType) Insertar(ClaimsIdentity? identity, Evento evento)
+        public (string? anoOut,string? codOut,string? mensaje, string? tipoMensaje) Insertar(ClaimsIdentity? identity, Tarea tarea)
         {
             var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
 
             string? mensaje = "";
             string? tipoMensaje = "";
-            string? benAnoOut = "";
-            string? benCodOut = "";
+            string? anoOut = "";
+            string? codOut = "";
             try
             {
                 cn.getcn.Open();
 
-                SqlCommand cmd = new SqlCommand("SP_INSERTAR_EVENTO", cn.getcn);
+                SqlCommand cmd = new SqlCommand("SP_INSERTAR_TAREA", cn.getcn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@P_EVENOM", evento.EveNom);
-                cmd.Parameters.AddWithValue("@P_EVEDES", evento.EveDes);
-                cmd.Parameters.AddWithValue("@P_EVEFEC", evento.EveFec);
-                cmd.Parameters.AddWithValue("@P_EVEHOR", evento.EveHor);
-                cmd.Parameters.AddWithValue("@P_EVEPREPLA", evento.EvePrePla);
-                cmd.Parameters.AddWithValue("@P_EVEPREEJE", "0");
-                cmd.Parameters.AddWithValue("@P_UBICOD", evento.UbiCod);
-                cmd.Parameters.AddWithValue("@P_EVEEST", "P");
+                cmd.Parameters.AddWithValue("@P_TARNOM", tarea.TarNom);
+                cmd.Parameters.AddWithValue("@P_TARDES", tarea.TarDes);
+                cmd.Parameters.AddWithValue("@P_TARFECINIPLA", tarea.TarFecIniPla);
+                cmd.Parameters.AddWithValue("@P_TARFECFINPLA", tarea.TarFecFinPla);
+                cmd.Parameters.AddWithValue("@P_TARFECINIEJE", "");
+                cmd.Parameters.AddWithValue("@P_TARFECFINEJE", "");
+                cmd.Parameters.AddWithValue("@P_TAREST", "I");
+                cmd.Parameters.AddWithValue("@P_EVEANO", tarea.EveAno);
+                cmd.Parameters.AddWithValue("@P_EVECOD", tarea.EveCod);
                 cmd.Parameters.AddWithValue("@P_USUING", userClaims.UsuNomUsu);
                 cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
                 cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
@@ -115,18 +118,18 @@ namespace events_app.Modulos
                 pTipoMensaje.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(pTipoMensaje);
 
-                SqlParameter pBenAno = new SqlParameter("@P_EVEANO_OUT", SqlDbType.NVarChar, 4);
+                SqlParameter pBenAno = new SqlParameter("@P_TARANO_OUT", SqlDbType.NVarChar, 4);
                 pBenAno.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(pBenAno);
 
-                SqlParameter pBenCod = new SqlParameter("@P_EVECOD_OUT", SqlDbType.Char, 6);
+                SqlParameter pBenCod = new SqlParameter("@P_TARCOD_OUT", SqlDbType.Char, 6);
                 pBenCod.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(pBenCod);
 
                 cmd.ExecuteNonQuery();
 
-                benAnoOut = pBenAno.Value.ToString();
-                benCodOut = pBenCod.Value.ToString();
+                anoOut = pBenAno.Value.ToString();
+                codOut = pBenCod.Value.ToString();
                 mensaje = pDescripcionMensaje.Value.ToString();
                 tipoMensaje = pTipoMensaje.Value.ToString();
             }
@@ -139,9 +142,10 @@ namespace events_app.Modulos
             {
                 cn.getcn.Close();
             }
-            return (benAnoOut, benCodOut, mensaje, tipoMensaje);
+            return (anoOut, codOut, mensaje, tipoMensaje);
         }
-        public (string? message, string? messageType) Modificar(ClaimsIdentity? identity, Evento evento)
+
+        public (string? mensaje, string? tipoMensaje) Modificar(ClaimsIdentity? identity, Tarea tarea)
         {
             var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
 
@@ -151,18 +155,15 @@ namespace events_app.Modulos
             {
                 cn.getcn.Open();
 
-                SqlCommand cmd = new SqlCommand("SP_MODIFICAR_EVENTO", cn.getcn);
+                SqlCommand cmd = new SqlCommand("SP_MODIFICAR_TAREA", cn.getcn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@P_EVEANO", evento.EveAno);
-                cmd.Parameters.AddWithValue("@P_EVECOD", evento.EveCod);
-                cmd.Parameters.AddWithValue("@P_EVENOM", evento.EveNom);
-                cmd.Parameters.AddWithValue("@P_EVEDES", evento.EveDes);
-                cmd.Parameters.AddWithValue("@P_EVEFEC", evento.EveFec);
-                cmd.Parameters.AddWithValue("@P_EVEHOR", evento.EveHor);
-                cmd.Parameters.AddWithValue("@P_EVEPREPLA", evento.EvePrePla);
-                cmd.Parameters.AddWithValue("@P_EVEPREEJE", evento.EvePreEje);
-                cmd.Parameters.AddWithValue("@P_UBICOD", evento.UbiCod);
+                cmd.Parameters.AddWithValue("@P_TARANO", tarea.TarAno);
+                cmd.Parameters.AddWithValue("@P_TARCOD", tarea.TarCod);
+                cmd.Parameters.AddWithValue("@P_TARNOM", tarea.TarNom);
+                cmd.Parameters.AddWithValue("@P_TARDES", tarea.TarDes);
+                cmd.Parameters.AddWithValue("@P_TARFECINIPLA", tarea.TarFecIniPla);
+                cmd.Parameters.AddWithValue("@P_TARFECFINPLA", tarea.TarFecFinPla);
                 cmd.Parameters.AddWithValue("@P_USUMOD", userClaims.UsuNomUsu);
                 cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
                 cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
@@ -177,6 +178,7 @@ namespace events_app.Modulos
                 SqlParameter pTipoMensaje = new SqlParameter("@P_TIPO_MENSAJE", SqlDbType.Char, 1);
                 pTipoMensaje.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(pTipoMensaje);
+
 
                 cmd.ExecuteNonQuery();
 
@@ -195,7 +197,7 @@ namespace events_app.Modulos
             return (mensaje, tipoMensaje);
         }
 
-        public (string? message, string? messageType) Eliminar(ClaimsIdentity? identity, Evento evento)
+        public (string? message, string? messageType) Eliminar(ClaimsIdentity? identity, Tarea tarea)
         {
             var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
 
@@ -205,11 +207,11 @@ namespace events_app.Modulos
             {
                 cn.getcn.Open();
 
-                SqlCommand cmd = new SqlCommand("SP_ELIMINAR_EVENTO", cn.getcn);
+                SqlCommand cmd = new SqlCommand("SP_ELIMINAR_TAREA", cn.getcn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@P_EVEANO", evento.EveAno);
-                cmd.Parameters.AddWithValue("@P_EVECOD", evento.EveCod);
+                cmd.Parameters.AddWithValue("@P_TARANO", tarea.TarAno);
+                cmd.Parameters.AddWithValue("@P_TARCOD", tarea.TarCod);
                 cmd.Parameters.AddWithValue("@P_USUMOD", userClaims.UsuNomUsu);
                 cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
                 cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);

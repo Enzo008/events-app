@@ -3,16 +3,20 @@ import { NavLink, useMatch } from "react-router-dom";
 import EventsIcon from "../../../icons/EventsIcon";
 import SquareIcon from "../../../icons/SquareIcon";
 import ArrowIcon from "../../../icons/ArrowIcon";
+import UserIcon from "../../../icons/UserIcon";
+import ToolsIcon from "../../../icons/ToolsIcon";
 
 const componentMap = {
     'EventsIcon': EventsIcon,
     'SquareIcon': SquareIcon,
+    'UserIcon': UserIcon,
+    'ToolsIcon': ToolsIcon,
 };
 
 const MenuItem = ({ menu, level }) => {
     const Icono  = componentMap[menu.menIco.trim()];
     
-    const match = useMatch(menu.menRef === '#' || menu.menRef === '' ? '#' : `/${menu.menRef}`);
+    const match = useMatch(menu.menRef === '#' ? '#' : `/${menu.menRef}`);
     const isActive = match ? 'active_menu' : '';
     const [isOpen, setIsOpen] = useState(false);
 
@@ -31,7 +35,7 @@ const MenuItem = ({ menu, level }) => {
             <div className="flex ai-center">
                 <NavLink
                     className={`menu-item flex ai-center flex-grow-1 gap-1 p_5 ${isActive}`} 
-                    to={menu.menRef === '#' || menu.menRef === '' ? '#' : `${menu.menRef}`}
+                    to={menu.menRef === '#' ? '#' : `${menu.menRef}`}
                 >
                     <span className='flex ai-center jc-center'
                         style={{fontSize: `${level == 0 ? '1.25rem': '1rem'}`}}

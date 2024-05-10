@@ -8,14 +8,14 @@ namespace events_app.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class EventoController : ControllerBase
+    public class TareaController : ControllerBase
     {
-        private readonly EventoDAO _eventos;
+        private readonly TareaDAO _tareas;
          private readonly UsuarioDAO _usuarios;
 
-        public EventoController(EventoDAO eventos, UsuarioDAO usuarios)
+        public TareaController(TareaDAO tareas, UsuarioDAO usuarios)
         {
-            _eventos = eventos;
+            _tareas = tareas;
             _usuarios = usuarios;
         }
 
@@ -28,32 +28,32 @@ namespace events_app.Server.Controllers
 
             if (!rToken.success) return Unauthorized(rToken);
 
-            var result = _eventos.Buscar(identity);
+            var result = _tareas.Buscar(identity);
             return Ok(result);
         }
 
         [HttpGet]
         [Route("{eveAno}/{eveCod}")]
-        public dynamic BuscarEvento(string eveAno, string eveCod)
+        public dynamic BuscarTareasEvento(string eveAno, string eveCod)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var rToken = Jwt.validarToken(identity, _usuarios);
 
             if (!rToken.success) return Unauthorized(rToken);
 
-            var result = _eventos.Buscar(identity, eveAno: eveAno, eveCod: eveCod);
-            return Ok(result.FirstOrDefault());
+            var result = _tareas.Buscar(identity, eveAno: eveAno, eveCod: eveCod);
+            return Ok(result);
         }
 
         [HttpPost]
-        public dynamic Insertar(Evento evento)
+        public dynamic Insertar(Tarea tarea)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var rToken = Jwt.validarToken(identity, _usuarios);
 
             if (!rToken.success) return rToken;
 
-            var (ano, cod, message, messageType) = _eventos.Insertar(identity, evento);
+            var (ano, cod, message, messageType) = _tareas.Insertar(identity, tarea);
             if (messageType == "1") // Error
             {
                 return new BadRequestObjectResult(new { success = false, message });
@@ -69,14 +69,14 @@ namespace events_app.Server.Controllers
         }
 
         [HttpPut]
-        public dynamic Modificar(Evento evento)
+        public dynamic Modificar(Tarea tarea)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var rToken = Jwt.validarToken(identity, _usuarios);
 
             if (!rToken.success) return rToken;
 
-            var (message, messageType) = _eventos.Modificar(identity, evento);
+            var (message, messageType) = _tareas.Modificar(identity, tarea);
             if (messageType == "1") // Error
             {
                 return new BadRequestObjectResult(new { success = false, message });
@@ -92,14 +92,14 @@ namespace events_app.Server.Controllers
         }
 
         [HttpDelete]
-        public dynamic Eliminar(Evento evento)
+        public dynamic Eliminar(Tarea tarea)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var rToken = Jwt.validarToken(identity, _usuarios);
 
             if (!rToken.success) return rToken;
 
-            var (message, messageType) = _eventos.Eliminar(identity, evento);
+            var (message, messageType) = _tareas.Eliminar(identity, tarea);
             if (messageType == "1") // Error
             {
                 return new BadRequestObjectResult(new { success = false, message });

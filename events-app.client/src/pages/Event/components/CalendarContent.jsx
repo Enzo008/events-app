@@ -5,11 +5,14 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Notiflix from 'notiflix';
 import { useEffect, useState } from 'react';
 import ModalCalendar from './ModalCalendar';
+import CryptoJS from 'crypto-js';
+import { useNavigate } from 'react-router-dom';
 
 moment.locale('es');
 const localizer = momentLocalizer(moment);
 
 const CalendarContent = () => {
+    const navigate = useNavigate();
     // Estado para el evento seleccionado
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'month');
@@ -153,13 +156,19 @@ const CalendarContent = () => {
 
                 },
             );
-
-           
         }
+    }
+
+    const handleDetails = () => {
+        const ciphertext = CryptoJS.AES.encrypt(selectedEvent.id, 'secret key 123').toString();
+        // Codifica la cadena cifrada para que pueda ser incluida de manera segura en una URL
+        const safeCiphertext = btoa(ciphertext).replace('+', '-').replace('/', '_').replace(/=+$/, '');
+        navigate(`/event-details/${safeCiphertext}`);
+
     }
     
     return (
-        <div className='flex flex-grow-1' style={{position: 'relative'}}>
+        <div className='flex flex-grow-1'>
             <Calendar
                 localizer={localizer}
                 events={events}
@@ -168,7 +177,7 @@ const CalendarContent = () => {
                 messages={messages}
                 onDoubleClickEvent={onDoubleClick}
                 onSelectEvent={onSelectEvent}
-                eventPropGetter={eventStyleGetter}
+                eventPropGetter={eventStyleGetter} 
                 onView={onViewChange}
                 onSelectSlot={onSelectSlot}
                 selectable={true}
@@ -186,8 +195,18 @@ const CalendarContent = () => {
                         right: '0'
                     }}
                 >
-                    <button onClick={handleDelete} className='button-delete p_5'>Eliminar</button>
-                    <button className='button-detail p_5'>Ver Detalles</button>
+                    {/* <button 
+                        onClick={handleDelete} 
+                        className='button-delete p_5'
+                    >
+                        Eliminar
+                    </button> */}
+                    <button
+                        onClick={handleDetails}
+                        className='button-detail p_5'
+                    >
+                        Ver Detalles
+                    </button>
                 </div>
                 : 
                 <button

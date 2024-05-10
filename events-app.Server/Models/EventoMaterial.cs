@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace events_app.Server.Models
 {
-    public class Evento
+    public class EventoMaterial
     {
         [Key, Column(Order = 0)]
         public String? EveAno { get; set; }
@@ -19,6 +19,11 @@ namespace events_app.Server.Models
         public String? UbiCod { get; set; }
         public String? UbiNom { get; set; }
         public String? EveEst { get; set; }
+        public String? MatCod { get; set; }
+        public String? MatNom { get; set; }
+        public String? MatDes { get; set; }
+        public String? MatPre { get; set; }
+        public String? EveMatCan { get; set; }
         public String? UsuIng { get; set; }
         public DateTime? FecIng { get; set; }
         public String? UsuMod { get; set; }
