@@ -86,7 +86,7 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record, event }) => {
 
             const selectedSupplier = suppliers.find(supplier => supplier.proAno === proAno && supplier.proCod === proCod);
             if (selectedSupplier) {
-                setServiceCost(selectedSupplier.proPre);
+                setServiceCost(selectedSupplier.proSerCos);
             }
 
             const fetchData = async () => {
@@ -108,6 +108,7 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record, event }) => {
                     }
         
                     // Guarda las ubicaciones en el estado
+                    console.log(data);
                     setServices(data);
                 } catch (error) {
                     console.error('Error:', error);
@@ -222,6 +223,7 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record, event }) => {
                             <tr>
                                 <th>Nombre</th>
                                 <th>Descripción</th>
+                                <th>Costo</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -231,6 +233,7 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record, event }) => {
                                     <tr key={item.serCod}>
                                         <td className='center'>{item.serNom}</td>
                                         <td>{item.serDes}</td>
+                                        <td className='center'>S/. {formatterBudget.format(item.proSerCos)}</td>
                                     </tr>
                                 ))
                                 :    

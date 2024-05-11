@@ -182,7 +182,7 @@ const CalendarContent = () => {
                 onSelectSlot={onSelectSlot}
                 selectable={true}
                 view={lastView}
-                style={{ flexGrow: '1'}}
+                style={{ flexGrow: '1', display: 'flex', height: '100vh'}}
             />
             {
                 selectedEvent 

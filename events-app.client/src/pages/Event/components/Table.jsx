@@ -6,6 +6,7 @@ import {
     flexRender,
 } from '@tanstack/react-table';
 import { useState } from 'react';
+import SortIcon from '../../../icons/SortIcon';
 
 const smallPageSizes = [10, 20, 30, 50];
 const largePageSizes = [100, 200, 300, 500];
@@ -42,29 +43,29 @@ const Table = ({data = [], columns = []}) => {
                                                     key={header.id} 
                                                     onClick={header.column.getToggleSortingHandler()}
                                                 >
-                                                    <div>
+                                                    <div className='flex ai-center jc-space-between pointer'>
                                                         {
-                                                            <span className='bold'>
+                                                            <span className='bold flex-grow-1'>
                                                                 {flexRender(header.column.columnDef.header, header.getContext())}
                                                             </span>
                                                         }
-                                                        {/* <div className='flex flex-column ai-center jc-center PowerMas_Icons_Sorter'>
+                                                        <div className='flex ai-center jc-center'>
                                                             {header.column.getIsSorted() === 'asc' && !header.column.columnDef.disableSorting ? 
                                                                 <span className="sort-icon active">
-                                                                    <Sort />
+                                                                    <SortIcon type='asc' />
                                                                 </span> :
                                                                 header.column.getIsSorted() === 'desc' && !header.column.columnDef.disableSorting ? 
                                                                 <span className="sort-icon active">
-                                                                    <Sort />
+                                                                    <SortIcon type='desc' />
                                                                 </span> :
                                                                 !header.column.columnDef.disableSorting &&
                                                                 <>
                                                                     <span className="sort-icon active">
-                                                                        <Sort />
+                                                                        <SortIcon />
                                                                     </span>
                                                                 </>
                                                             }
-                                                        </div> */}
+                                                        </div>
                                                     </div>
                                                 </th>
                                             ))
@@ -124,7 +125,7 @@ const Table = ({data = [], columns = []}) => {
                 </div>
                 <div>
                     <p className=''>
-                        Mostrando {table.options.state.pagination.pageIndex * table.options.state.pagination.pageSize + 1} a {Math.min((table.options.state.pagination.pageIndex + 1) * table.options.state.pagination.pageSize, table.options.data.length)} de {table.options.data.length} registros
+                        Mostrando {table.options.state.pagination.pageIndex * table.options.state.pagination.pageSize + 1} al {Math.min((table.options.state.pagination.pageIndex + 1) * table.options.state.pagination.pageSize, table.options.data.length)} de {table.options.data.length} registros
                     </p>
                 </div>
             </div>

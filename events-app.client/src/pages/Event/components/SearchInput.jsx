@@ -8,7 +8,7 @@ const SearchInput = ({ value, onChange }) => {
             </span>
             <input 
                 style={{paddingLeft: '2rem'}}
-                className='Large_12 Large-p_25'
+                className='Large_12 Large-p_5'
                 type="search"
                 placeholder='Buscar'
                 onChange={onChange}

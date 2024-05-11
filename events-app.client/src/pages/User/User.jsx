@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import SearchInput from "../Event/components/SearchInput";
 import PlusIcon from "../../icons/PlusIcon";
-import { getColumnsMaterial } from "./columns";
 import Table from "../Event/components/Table";
 import Notiflix from "notiflix";
-import ModalMaterial from "./components/ModalMaterial";
+import { useNavigate } from "react-router-dom";
 import ExcelIcon from "../../icons/ExcelIcon";
+import { getColumnsUser } from "./column";
+import ModalUser from "./components/ModalUser";
+import ModalUserEvent from "./components/ModalUserEvent";
 
-const Material = () => {
+const User = () => {
+    const navigate = useNavigate();
     const [ data, setData ] = useState([])
     const [ dataSelected, setDataSelected ] = useState(null)
     const [ modalOpen, setModalOpen ] = useState(false)
@@ -16,13 +19,23 @@ const Material = () => {
         setDataSelected(record);
         setModalOpen(true);
     };
-
     const closeModal = () => {
         setModalOpen(false);
         setDataSelected(null);
     }
 
-    const columns = useMemo(() => getColumnsMaterial(openModal, setRefresh), [openModal, setRefresh]);
+
+    const [ modalTableOpen, setModalTableOpen ] = useState(false)
+    const openModalTable = (record) => {
+        setDataSelected(record);
+        setModalTableOpen(true);
+    };
+    const closeModalTable = () => {
+        setModalTableOpen(false);
+        setDataSelected(null);
+    }
+
+    const columns = useMemo(() => getColumnsUser(openModal, setRefresh, openModalTable), [openModal, setRefresh, openModalTable]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,7 +44,7 @@ const Material = () => {
                 // Valores del storage
                 const token = localStorage.getItem('token');
                 // Obtenemos los datos
-                const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/Material`, {
+                const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/Usuario`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -55,22 +68,22 @@ const Material = () => {
     }, [refresh])
 
 
-    const [searchFilterSupplier, setSearchFilterSupplier] = useState('');
+    const [searchFilter, setSearchFilter] = useState('');
     const filteredData = useMemo(() => 
         data.filter(item => 
-            (item.matNom ? item.matNom.toUpperCase().includes(searchFilterSupplier.toUpperCase()) : false) ||
-            (item.matDes ? item.matDes.toUpperCase().includes(searchFilterSupplier.toUpperCase()) : false)
-        ), [data, searchFilterSupplier]
+            (item.usuNom ? item.usuNom.toUpperCase().includes(searchFilter.toUpperCase()) : false) ||
+            (item.usuApe ? item.usuApe.toUpperCase().includes(searchFilter.toUpperCase()) : false)
+        ), [data, searchFilter]
     );
 
     return (
         <>
             <div className="table-content p2 flex-grow-1">
-                <h2>Listado de Materiales</h2>
+                <h2>Listado de Usuarios</h2>
                 <div className="flex gap_5">
                     <SearchInput 
-                        value={searchFilterSupplier} 
-                        onChange={e => setSearchFilterSupplier(e.target.value)} 
+                        value={searchFilter} 
+                        onChange={e => setSearchFilter(e.target.value)} 
                     />
                     <button 
                         className='button-primary flex jc-space-between Large_3 ai-center gap_5'
@@ -96,14 +109,19 @@ const Material = () => {
                     columns={columns} 
                 />
             </div>
-            <ModalMaterial 
+            <ModalUser 
                 modalOpen={modalOpen}
                 closeModal={() => closeModal() }
                 setRefresh={setRefresh}
+                record={dataSelected}
+            />
+            <ModalUserEvent 
+                modalOpen={modalTableOpen}
+                closeModal={() => closeModalTable() }
                 record={dataSelected}
             />
         </>
     )
 }
 
-export default Material
+export default User

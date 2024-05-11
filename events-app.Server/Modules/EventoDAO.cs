@@ -77,19 +77,22 @@ namespace events_app.Modulos
             return temporal;
         }
 
-        public (string? benAnoOut,string? benCodOut,string? message, string? messageType) Insertar(ClaimsIdentity? identity, Evento evento)
+        public (string? ano,string? cod,string? message, string? messageType) Insertar(ClaimsIdentity? identity, Evento evento)
         {
             var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
 
             string? mensaje = "";
             string? tipoMensaje = "";
-            string? benAnoOut = "";
-            string? benCodOut = "";
+            string? ano = "";
+            string? cod = "";
+            SqlCommand cmd;
+            SqlParameter pDescripcionMensaje;
+            SqlParameter pTipoMensaje;
             try
             {
                 cn.getcn.Open();
 
-                SqlCommand cmd = new SqlCommand("SP_INSERTAR_EVENTO", cn.getcn);
+                cmd = new SqlCommand("SP_INSERTAR_EVENTO", cn.getcn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("@P_EVENOM", evento.EveNom);
@@ -107,11 +110,11 @@ namespace events_app.Modulos
                 cmd.Parameters.AddWithValue("@P_USUNOM_U", userClaims.UsuNom);
                 cmd.Parameters.AddWithValue("@P_USUAPE_U", userClaims.UsuApe);
 
-                SqlParameter pDescripcionMensaje = new SqlParameter("@P_DESCRIPCION_MENSAJE", SqlDbType.NVarChar, -1);
+                pDescripcionMensaje = new SqlParameter("@P_DESCRIPCION_MENSAJE", SqlDbType.NVarChar, -1);
                 pDescripcionMensaje.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(pDescripcionMensaje);
 
-                SqlParameter pTipoMensaje = new SqlParameter("@P_TIPO_MENSAJE", SqlDbType.Char, 1);
+                pTipoMensaje = new SqlParameter("@P_TIPO_MENSAJE", SqlDbType.Char, 1);
                 pTipoMensaje.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(pTipoMensaje);
 
@@ -125,10 +128,34 @@ namespace events_app.Modulos
 
                 cmd.ExecuteNonQuery();
 
-                benAnoOut = pBenAno.Value.ToString();
-                benCodOut = pBenCod.Value.ToString();
+                ano = pBenAno.Value.ToString();
+                cod = pBenCod.Value.ToString();
                 mensaje = pDescripcionMensaje.Value.ToString();
                 tipoMensaje = pTipoMensaje.Value.ToString();
+
+                cmd = new SqlCommand("SP_INSERTAR_USUARIO_EVENTO", cn.getcn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@P_USUANO", userClaims.UsuAno);
+                cmd.Parameters.AddWithValue("@P_USUCOD", userClaims.UsuCod);
+                cmd.Parameters.AddWithValue("@P_EVEANO", ano);
+                cmd.Parameters.AddWithValue("@P_EVECOD", cod);
+                cmd.Parameters.AddWithValue("@P_USUING", userClaims.UsuNomUsu);
+                cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
+                cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
+                cmd.Parameters.AddWithValue("@P_USUCOD_U", userClaims.UsuCod);
+                cmd.Parameters.AddWithValue("@P_USUNOM_U", userClaims.UsuNom);
+                cmd.Parameters.AddWithValue("@P_USUAPE_U", userClaims.UsuApe);
+
+                pDescripcionMensaje = new SqlParameter("@P_DESCRIPCION_MENSAJE", SqlDbType.NVarChar, -1);
+                pDescripcionMensaje.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pDescripcionMensaje);
+
+                pTipoMensaje = new SqlParameter("@P_TIPO_MENSAJE", SqlDbType.Char, 1);
+                pTipoMensaje.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pTipoMensaje);
+
+                cmd.ExecuteNonQuery();
             }
             catch (SqlException ex)
             {
@@ -139,7 +166,7 @@ namespace events_app.Modulos
             {
                 cn.getcn.Close();
             }
-            return (benAnoOut, benCodOut, mensaje, tipoMensaje);
+            return (ano, cod, mensaje, tipoMensaje);
         }
         public (string? message, string? messageType) Modificar(ClaimsIdentity? identity, Evento evento)
         {

@@ -11,6 +11,7 @@ const ModalTask = ({modalOpen, closeModal, setRefresh, record, event}) => {
     const initEvent = {
         tarNom: '',
         tarDes: '',
+        tarRes: '',
         tarFecIniPla: ini,
         tarFecFinPla: fin
     }
@@ -36,6 +37,7 @@ const ModalTask = ({modalOpen, closeModal, setRefresh, record, event}) => {
                 setValue('tarCod', record.tarCod);
                 setValue('tarNom', record.tarNom);
                 setValue('tarDes', record.tarDes);
+                setValue('tarRes', record.tarRes);
                 setValue('tarFecIniPla', moment(record.tarFecIniPla).format('YYYY-MM-DD'));
                 setValue('tarFecFinPla', moment(record.tarFecFinPla).format('YYYY-MM-DD'));
             } else {
@@ -182,6 +184,27 @@ const ModalTask = ({modalOpen, closeModal, setRefresh, record, event}) => {
                             </p>
                         )}
                     </div>
+                </div>
+                <div>
+                    <label htmlFor="tarRes">Responsable:</label>
+                    <input
+                        type="text" 
+                        id="tarRes"
+                        className={`input-${dirtyFields.tarRes || isSubmitted ? (errors.tarRes ? 'invalid' : 'valid') : ''}`} 
+                        autoComplete='off'
+                        maxLength={50}
+                        placeholder='Ingresa un Responsable para el evento'
+                        {...register('tarRes', { 
+                            required: 'El campo es obligatorio.',
+                        })} 
+                    />
+                    {errors.tarRes ? (
+                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.tarRes.message}</p>
+                    ) : (
+                        <p className="Large-f_75 Medium-f1 f_75 message-invalid" style={{ visibility: "hidden" }}>
+                            Espacio reservado para el mensaje de error
+                        </p>
+                    )}
                 </div>
                 <button
                     className='button-primary Phone_6 p_25 f1'

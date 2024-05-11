@@ -56,6 +56,7 @@ namespace events_app.Modulos
                         TarCod = rd["TARCOD"].ToString(),
                         TarNom = rd["TARNOM"].ToString(),
                         TarDes = rd["TARDES"].ToString(),
+                        TarRes = rd["TARRES"].ToString(),
                         TarFecIniPla = rd["TARFECINIPLA"].ToString(),
                         TarFecFinPla = rd["TARFECFINPLA"].ToString(),
                         TarFecIniEje = rd["TARFECINIEJE"].ToString(),
@@ -101,6 +102,7 @@ namespace events_app.Modulos
                 cmd.Parameters.AddWithValue("@P_TARFECINIEJE", "");
                 cmd.Parameters.AddWithValue("@P_TARFECFINEJE", "");
                 cmd.Parameters.AddWithValue("@P_TAREST", "I");
+                cmd.Parameters.AddWithValue("@P_TARRES", tarea.TarRes);
                 cmd.Parameters.AddWithValue("@P_EVEANO", tarea.EveAno);
                 cmd.Parameters.AddWithValue("@P_EVECOD", tarea.EveCod);
                 cmd.Parameters.AddWithValue("@P_USUING", userClaims.UsuNomUsu);
@@ -164,6 +166,7 @@ namespace events_app.Modulos
                 cmd.Parameters.AddWithValue("@P_TARDES", tarea.TarDes);
                 cmd.Parameters.AddWithValue("@P_TARFECINIPLA", tarea.TarFecIniPla);
                 cmd.Parameters.AddWithValue("@P_TARFECFINPLA", tarea.TarFecFinPla);
+                cmd.Parameters.AddWithValue("@P_TARRES", tarea.TarRes);
                 cmd.Parameters.AddWithValue("@P_USUMOD", userClaims.UsuNomUsu);
                 cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
                 cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);

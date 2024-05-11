@@ -23,10 +23,10 @@ export const getSupplierColumns = (openModal, setRefresh, userLogged) => {
         },
         {
             header: "Costo",
-            accessorKey: "proPre",
+            accessorKey: "proSerCos",
             cell: ({row}) => (
                 <span className='flex jc-center'>
-                    S/. { formatterBudget.format(row.original.proPre) }
+                    S/. { formatterBudget.format(row.original.proSerCos) }
                 </span>
             )
         },
@@ -198,6 +198,10 @@ export const getTaskColumns = (openModal, setRefresh, userLogged) => {
                     </span>
                 )                    
             },
+        },
+        {
+            header: "Responsable",
+            accessorKey: "tarRes"
         },
     ];
 

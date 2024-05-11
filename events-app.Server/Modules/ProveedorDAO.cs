@@ -11,7 +11,7 @@ namespace events_app.Modulos
         private ConexionDAO cn = new ConexionDAO();
 
 
-        public IEnumerable<Proveedor> Buscar(ClaimsIdentity? identity, string? proAno = null, string? proCod = null, string? proNom = null, string? proApe = null, string? proTel = null, string? proPre = null)
+        public IEnumerable<Proveedor> Buscar(ClaimsIdentity? identity, string? proAno = null, string? proCod = null, string? proNom = null, string? proApe = null, string? proTel = null)
         {
             var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
 
@@ -28,7 +28,6 @@ namespace events_app.Modulos
                 cmd.Parameters.AddWithValue("@P_PRONOM", string.IsNullOrEmpty(proNom) ? (object)DBNull.Value : proNom);
                 cmd.Parameters.AddWithValue("@P_PROAPE", string.IsNullOrEmpty(proApe) ? (object)DBNull.Value : proApe);
                 cmd.Parameters.AddWithValue("@P_PROTEL", string.IsNullOrEmpty(proTel) ? (object)DBNull.Value : proTel);
-                cmd.Parameters.AddWithValue("@P_PROPRE", string.IsNullOrEmpty(proPre) ? (object)DBNull.Value : proPre);
                 cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
                 cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
                 cmd.Parameters.AddWithValue("@P_USUCOD_U", userClaims.UsuCod);
@@ -53,7 +52,7 @@ namespace events_app.Modulos
                         ProNom = rd["PRONOM"].ToString(),
                         ProApe = rd["PROAPE"].ToString(),
                         ProTel = rd["PROTEL"].ToString(),
-                        ProPre = rd["PROPRE"].ToString(),
+                        ProSerCos = rd["PROSERCOS"].ToString(),
                         SerCan = rd["SERCAN"].ToString(),
                     };
                     temporal.Add(obj);
@@ -69,6 +68,162 @@ namespace events_app.Modulos
                 cn.getcn.Close();
             }
             return temporal;
+        }
+
+         public (string? ano,string? cod, string? message, string? messageType) Insertar(ClaimsIdentity? identity, Proveedor proveedor)
+        {
+            var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
+
+            string? mensaje = "";
+            string? tipoMensaje = "";
+            string? ano = "";
+            string? cod = "";
+            try
+            {
+                cn.getcn.Open();
+
+                SqlCommand cmd = new SqlCommand("SP_INSERTAR_PROVEEDOR", cn.getcn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@P_PRONOM", proveedor.ProNom);
+                cmd.Parameters.AddWithValue("@P_PROAPE", proveedor.ProApe);
+                cmd.Parameters.AddWithValue("@P_PROTEL", proveedor.ProTel);
+                cmd.Parameters.AddWithValue("@P_USUING", userClaims.UsuNomUsu);
+                cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
+                cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
+                cmd.Parameters.AddWithValue("@P_USUCOD_U", userClaims.UsuCod);
+                cmd.Parameters.AddWithValue("@P_USUNOM_U", userClaims.UsuNom);
+                cmd.Parameters.AddWithValue("@P_USUAPE_U", userClaims.UsuApe);
+
+                SqlParameter pDescripcionMensaje = new SqlParameter("@P_DESCRIPCION_MENSAJE", SqlDbType.NVarChar, -1);
+                pDescripcionMensaje.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pDescripcionMensaje);
+
+                SqlParameter pTipoMensaje = new SqlParameter("@P_TIPO_MENSAJE", SqlDbType.Char, 1);
+                pTipoMensaje.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pTipoMensaje);
+
+                SqlParameter pAno = new SqlParameter("@P_EVEANO_OUT", SqlDbType.NVarChar, 4);
+                pAno.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pAno);
+
+                SqlParameter pCod = new SqlParameter("@P_EVECOD_OUT", SqlDbType.Char, 6);
+                pCod.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pCod);
+
+                cmd.ExecuteNonQuery();
+
+                ano = pAno.Value.ToString();
+                cod = pCod.Value.ToString();
+                mensaje = pDescripcionMensaje.Value.ToString();
+                tipoMensaje = pTipoMensaje.Value.ToString();
+            }
+            catch (SqlException ex)
+            {
+                mensaje = ex.Message;
+                tipoMensaje = "1";
+            }
+            finally
+            {
+                cn.getcn.Close();
+            }
+            return (ano, cod, mensaje, tipoMensaje);
+        }
+
+        public (string? message, string? messageType) Modificar(ClaimsIdentity? identity, Proveedor proveedor)
+        {
+            var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
+
+            string? mensaje = "";
+            string? tipoMensaje = "";
+            try
+            {
+                cn.getcn.Open();
+
+                SqlCommand cmd = new SqlCommand("SP_MODIFICAR_PROVEEDOR", cn.getcn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@P_PROANO", proveedor.ProAno);
+                cmd.Parameters.AddWithValue("@P_PROCOD", proveedor.ProCod);
+                cmd.Parameters.AddWithValue("@P_PRONOM", proveedor.ProNom);
+                cmd.Parameters.AddWithValue("@P_PROAPE", proveedor.ProApe);
+                cmd.Parameters.AddWithValue("@P_PROTEL", proveedor.ProTel);
+                cmd.Parameters.AddWithValue("@P_USUMOD", userClaims.UsuNomUsu);
+                cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
+                cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
+                cmd.Parameters.AddWithValue("@P_USUCOD_U", userClaims.UsuCod);
+                cmd.Parameters.AddWithValue("@P_USUNOM_U", userClaims.UsuNom);
+                cmd.Parameters.AddWithValue("@P_USUAPE_U", userClaims.UsuApe);
+
+                SqlParameter pDescripcionMensaje = new SqlParameter("@P_DESCRIPCION_MENSAJE", SqlDbType.NVarChar, -1);
+                pDescripcionMensaje.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pDescripcionMensaje);
+
+                SqlParameter pTipoMensaje = new SqlParameter("@P_TIPO_MENSAJE", SqlDbType.Char, 1);
+                pTipoMensaje.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pTipoMensaje);
+
+                cmd.ExecuteNonQuery();
+
+                mensaje = pDescripcionMensaje.Value.ToString();
+                tipoMensaje = pTipoMensaje.Value.ToString();
+            }
+            catch (SqlException ex)
+            {
+                mensaje = ex.Message;
+                tipoMensaje = "1";
+            }
+            finally
+            {
+                cn.getcn.Close();
+            }
+            return (mensaje, tipoMensaje);
+        }
+        public (string? message, string? messageType) Eliminar(ClaimsIdentity? identity, Proveedor proveedor)
+        {
+            var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
+
+            string? mensaje = "";
+            string? tipoMensaje = "";
+            try
+            {
+                cn.getcn.Open();
+
+                SqlCommand cmd = new SqlCommand("SP_ELIMINAR_PROVEEODR", cn.getcn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@P_PROANO", proveedor.ProAno);
+                cmd.Parameters.AddWithValue("@P_PROCOD", proveedor.ProCod);
+                cmd.Parameters.AddWithValue("@P_USUMOD", userClaims.UsuNomUsu);
+                cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
+                cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
+                cmd.Parameters.AddWithValue("@P_USUCOD_U", userClaims.UsuCod);
+                cmd.Parameters.AddWithValue("@P_USUNOM_U", userClaims.UsuNom);
+                cmd.Parameters.AddWithValue("@P_USUAPE_U", userClaims.UsuApe);
+
+                SqlParameter pDescripcionMensaje = new SqlParameter("@P_DESCRIPCION_MENSAJE", SqlDbType.NVarChar, -1);
+                pDescripcionMensaje.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pDescripcionMensaje);
+
+                SqlParameter pTipoMensaje = new SqlParameter("@P_TIPO_MENSAJE", SqlDbType.Char, 1);
+                pTipoMensaje.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(pTipoMensaje);
+
+                cmd.ExecuteNonQuery();
+
+                mensaje = pDescripcionMensaje.Value.ToString();
+                tipoMensaje = pTipoMensaje.Value.ToString();
+            }
+            catch (SqlException ex)
+            {
+                mensaje = ex.Message;
+                tipoMensaje = "1";
+            }
+            finally
+            {
+                cn.getcn.Close();
+            }
+            return (mensaje, tipoMensaje);
         }
 
         public IEnumerable<EventoProveedor> BuscarEventoProveedor(ClaimsIdentity? identity, string? eveAno = null, string? eveCod = null, string? proAno = null, string? proCod = null)
@@ -120,7 +275,7 @@ namespace events_app.Modulos
                         ProCod = rd["PROCOD"].ToString(),
                         ProNom = rd["PRONOM"].ToString(),
                         ProApe = rd["PROAPE"].ToString(),
-                        ProPre = rd["PROPRE"].ToString(),
+                        ProSerCos = rd["PROSERCOS"].ToString(),
                         ProTel = rd["PROTEL"].ToString(),
                         SerCan = rd["SERCAN"].ToString(),
                     };
@@ -187,61 +342,6 @@ namespace events_app.Modulos
             }
             return (mensaje, tipoMensaje);
         }
-
-        // public (string? message, string? messageType) Modificar(ClaimsIdentity? identity, Evento evento)
-        // {
-        //     var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
-
-        //     string? mensaje = "";
-        //     string? tipoMensaje = "";
-        //     try
-        //     {
-        //         cn.getcn.Open();
-
-        //         SqlCommand cmd = new SqlCommand("SP_MODIFICAR_EVENTO", cn.getcn);
-        //         cmd.CommandType = CommandType.StoredProcedure;
-
-        //         cmd.Parameters.AddWithValue("@P_EVEANO", evento.EveAno);
-        //         cmd.Parameters.AddWithValue("@P_EVECOD", evento.EveCod);
-        //         cmd.Parameters.AddWithValue("@P_EVENOM", evento.EveNom);
-        //         cmd.Parameters.AddWithValue("@P_EVEDES", evento.EveDes);
-        //         cmd.Parameters.AddWithValue("@P_EVEFEC", evento.EveFec);
-        //         cmd.Parameters.AddWithValue("@P_EVEHOR", evento.EveHor);
-        //         cmd.Parameters.AddWithValue("@P_EVEPREPLA", evento.EvePrePla);
-        //         cmd.Parameters.AddWithValue("@P_EVEPREEJE", evento.EvePreEje);
-        //         cmd.Parameters.AddWithValue("@P_UBICOD", evento.UbiCod);
-        //         cmd.Parameters.AddWithValue("@P_UBICOD", evento.UbiCod);
-        //         cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
-        //         cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
-        //         cmd.Parameters.AddWithValue("@P_USUCOD_U", userClaims.UsuCod);
-        //         cmd.Parameters.AddWithValue("@P_USUNOM_U", userClaims.UsuNom);
-        //         cmd.Parameters.AddWithValue("@P_USUAPE_U", userClaims.UsuApe);
-
-        //         SqlParameter pDescripcionMensaje = new SqlParameter("@P_DESCRIPCION_MENSAJE", SqlDbType.NVarChar, -1);
-        //         pDescripcionMensaje.Direction = ParameterDirection.Output;
-        //         cmd.Parameters.Add(pDescripcionMensaje);
-
-        //         SqlParameter pTipoMensaje = new SqlParameter("@P_TIPO_MENSAJE", SqlDbType.Char, 1);
-        //         pTipoMensaje.Direction = ParameterDirection.Output;
-        //         cmd.Parameters.Add(pTipoMensaje);
-
-        //         cmd.ExecuteNonQuery();
-
-        //         mensaje = pDescripcionMensaje.Value.ToString();
-        //         tipoMensaje = pTipoMensaje.Value.ToString();
-        //     }
-        //     catch (SqlException ex)
-        //     {
-        //         mensaje = ex.Message;
-        //         tipoMensaje = "1";
-        //     }
-        //     finally
-        //     {
-        //         cn.getcn.Close();
-        //     }
-        //     return (mensaje, tipoMensaje);
-        // }
-
         public (string? message, string? messageType) EliminarEventoProveedor(ClaimsIdentity? identity, EventoProveedor eventoProveedor)
         {
             var userClaims = new UserClaims().GetClaimsFromIdentity(identity);

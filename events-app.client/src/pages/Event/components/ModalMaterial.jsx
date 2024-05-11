@@ -180,8 +180,15 @@ const ModalMaterial = ({modalOpen, closeModal, setRefresh, record, event }) => {
                         autoComplete='off'
                         maxLength={10}
                         placeholder='Ingresa una cantidad para el material'
+                        onInput={(e) => {
+                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                        }}
                         {...register('eveMatCan', { 
                             required: 'El campo es obligatorio.',
+                            pattern: {
+                                value: /^(?:[1-9]\d*|)$/,
+                                message: 'Valor no válido',
+                            },
                         })} 
                     />
                     {errors.eveMatCan ? (

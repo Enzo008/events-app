@@ -10,7 +10,7 @@ namespace events_app.Modulos
     {
         private ConexionDAO cn = new ConexionDAO();
 
-         public IEnumerable<Material> Buscar(ClaimsIdentity? identity, string? matCod = null, string? matNom = null, string? matDes = null, string? matPre = null)
+        public IEnumerable<Material> Buscar(ClaimsIdentity? identity, string? matCod = null, string? matNom = null, string? matDes = null, string? matPre = null)
         {
             var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
 
@@ -277,14 +277,12 @@ namespace events_app.Modulos
             return (mensaje, tipoMensaje);
         }
 
-        public (string? anoOut,string? codOut,string? message, string? messageType) Insertar(ClaimsIdentity? identity, Material material)
+        public (string? message, string? messageType) Insertar(ClaimsIdentity? identity, Material material)
         {
             var userClaims = new UserClaims().GetClaimsFromIdentity(identity);
 
             string? mensaje = "";
             string? tipoMensaje = "";
-            string? anoOut = "";
-            string? codOut = "";
             try
             {
                 cn.getcn.Open();
@@ -310,18 +308,8 @@ namespace events_app.Modulos
                 pTipoMensaje.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(pTipoMensaje);
 
-                SqlParameter pBenAno = new SqlParameter("@P_EVEANO_OUT", SqlDbType.NVarChar, 4);
-                pBenAno.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(pBenAno);
-
-                SqlParameter pBenCod = new SqlParameter("@P_EVECOD_OUT", SqlDbType.Char, 6);
-                pBenCod.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(pBenCod);
-
                 cmd.ExecuteNonQuery();
 
-                anoOut = pBenAno.Value.ToString();
-                codOut = pBenCod.Value.ToString();
                 mensaje = pDescripcionMensaje.Value.ToString();
                 tipoMensaje = pTipoMensaje.Value.ToString();
             }
@@ -334,7 +322,7 @@ namespace events_app.Modulos
             {
                 cn.getcn.Close();
             }
-            return (anoOut, codOut, mensaje, tipoMensaje);
+            return (mensaje, tipoMensaje);
         }
 
         public (string? message, string? messageType) Modificar(ClaimsIdentity? identity, Material material)
@@ -354,7 +342,7 @@ namespace events_app.Modulos
                 cmd.Parameters.AddWithValue("@P_MATNOM", material.MatNom);
                 cmd.Parameters.AddWithValue("@P_MATDES", material.MatDes);
                 cmd.Parameters.AddWithValue("@P_MATPRE", material.MatPre);
-                cmd.Parameters.AddWithValue("@P_USUING", userClaims.UsuNomUsu);
+                cmd.Parameters.AddWithValue("@P_USUMOD", userClaims.UsuNomUsu);
                 cmd.Parameters.AddWithValue("@P_LOGIPMAQ", userClaims.UsuIp);
                 cmd.Parameters.AddWithValue("@P_USUANO_U", userClaims.UsuAno);
                 cmd.Parameters.AddWithValue("@P_USUCOD_U", userClaims.UsuCod);

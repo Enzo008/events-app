@@ -126,7 +126,7 @@ namespace events_app.Server.Controllers
 
             if (!rToken.success) return rToken;
 
-            var (ano, cod, message, messageType)= _materiales.Insertar(identity, material);
+            var (message, messageType)= _materiales.Insertar(identity, material);
             if (messageType == "1") // Error
             {
                 return new BadRequestObjectResult(new { success = false, message });
@@ -137,7 +137,7 @@ namespace events_app.Server.Controllers
             }
             else // Registro modificado correctamente
             {
-                return new OkObjectResult(new { ano, cod, success = true, message });
+                return new OkObjectResult(new { success = true, message });
             }
         }
 

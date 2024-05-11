@@ -21,6 +21,54 @@ namespace events_app.Server.Controllers
             _usuarios = usuarios;
         }
 
+        [HttpGet]
+        public dynamic Buscar()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var rToken = Jwt.validarToken(identity, _usuarios);
+
+            if (!rToken.success) return Unauthorized(rToken);
+           
+            var usuarios = _usuarios.Buscar(identity);
+            return Ok(usuarios);
+        }
+
+        [HttpGet]
+        [Route("evento/{usuAno}/{usuCod}")]
+        public dynamic BuscarUsuarioEvento(string usuAno, string usuCod)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var rToken = Jwt.validarToken(identity, _usuarios);
+
+            if (!rToken.success) return Unauthorized(rToken);
+           
+            var usuarios = _usuarios.BuscarUsuarioEvento(identity,usuAno:usuAno,usuCod:usuCod);
+            return Ok(usuarios);
+        }
+
+        [HttpPost]
+        [Route("evento")]
+        public dynamic InsertarUsuarioEvento(UsuarioEvento usuarioEvento)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var rToken = Jwt.validarToken(identity, _usuarios);
+
+            if (!rToken.success) return rToken;
+
+            var (message, messageType) = _usuarios.InsertarUsuarioEvento(identity, usuarioEvento);
+            if (messageType == "1") // Error
+            {
+                return new BadRequestObjectResult(new { success = false, message });
+            }
+            else if (messageType == "2") // Registro ya existe
+            {
+                return new ConflictObjectResult(new { success = false, message });
+            }
+            else // Registro modificado correctamente
+            {
+                return new OkObjectResult(new { success = true, message });
+            }
+        }
 
         [HttpPost]
         public dynamic Insertar(Usuario usuario)

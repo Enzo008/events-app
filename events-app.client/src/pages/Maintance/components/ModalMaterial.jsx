@@ -28,6 +28,7 @@ const ModalMaterial = ({modalOpen, closeModal, setRefresh, record }) => {
         if (record) {
             console.log(record)
             // Si estás editando un registro existente, inicializa el formulario con los datos del registro
+            setValue('matCod', record.matCod);
             setValue('matNom', record.matNom);
             setValue('matDes', record.matDes);
             setValue('matPre', record.matPre);
@@ -137,9 +138,16 @@ const ModalMaterial = ({modalOpen, closeModal, setRefresh, record }) => {
                         className={`input-${dirtyFields.matPre || isSubmitted ? (errors.matPre ? 'invalid' : 'valid') : ''}`} 
                         autoComplete='off'
                         maxLength={10}
+                        onInput={(e) => {
+                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                        }}
                         placeholder='Ingresa un precio para el material'
                         {...register('matPre', { 
                             required: 'El campo es obligatorio.',
+                            pattern: {
+                                value: /^(?:[1-9]\d*|)$/,
+                                message: 'Valor no válido',
+                            },
                         })} 
                     />
                     {errors.matPre ? (

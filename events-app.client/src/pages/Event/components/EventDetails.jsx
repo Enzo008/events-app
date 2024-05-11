@@ -11,6 +11,8 @@ import ModalTask from "./ModalTask";
 import ModalMaterial from "./ModalMaterial";
 import ModalSupplier from "./ModalSupplier";
 import { AuthContext } from "../../../context/AuthContext";
+import ExcelIcon from "../../../icons/ExcelIcon";
+import { Export_Excel } from "../../../helpers/export";
 
 const formatterBudget = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 2, 
@@ -39,6 +41,10 @@ const EventDetails = () => {
             return navigate('/error');
         }
     }
+
+    const [supplierCost, setSupplierCost] = useState(0);
+    const [materialCost, setMaterialCost] = useState(0);
+
 
     const [ taskSelected, setTaskSelected ] = useState(null)
     const [ modalTask, setModalTask ] = useState(false)
@@ -195,6 +201,12 @@ const EventDetails = () => {
                 const data = await response.json();
                 console.log(data);
                 setSuppliers(data);
+
+                // Calcular la suma de los costos de los servicios de los proveedores
+                const supplierCostSum = data.reduce((sum, supplier) => sum + Number(supplier.proSerCos), 0);
+
+                // Actualizar el costo de los proveedores
+                setSupplierCost(supplierCostSum);
             } catch (error) {
                 console.error('Error:', error);
             } finally {
@@ -232,6 +244,12 @@ const EventDetails = () => {
                 const data = await response.json();
                 console.log(data);
                 setMaterials(data);
+
+                // Calcular la suma de los costos de los materiales
+                const materialCostSum = data.reduce((sum, material) => sum + (Number(material.matPre) * Number(material.eveMatCan)), 0);
+
+                // Actualizar el costo de los materiales
+                setMaterialCost(materialCostSum);
             } catch (error) {
                 console.error('Error:', error);
             } finally {
@@ -246,11 +264,13 @@ const EventDetails = () => {
     const filteredDataSupplier = useMemo(() => 
         suppliers.filter(item => 
             (item.proNom ? item.proNom.toUpperCase().includes(searchFilterSupplier.toUpperCase()) : false) ||
-            (item.proPre ? item.proPre.toUpperCase().includes(searchFilterSupplier.toUpperCase()) : false) ||
             (item.serCan ? item.serCan.toUpperCase().includes(searchFilterSupplier.toUpperCase()) : false) ||
+            (item.proSerCos ? item.proSerCos.toUpperCase().includes(searchFilterSupplier.toUpperCase()) : false) ||
             (item.proApe ? item.proApe.toUpperCase().includes(searchFilterSupplier.toUpperCase()) : false)
         ), [suppliers, searchFilterSupplier]
     );
+    const headersSupplier = ['NOMBRE','APELLIDO','COSTO','SERVICIOS'];
+    const propertiesSuppler = ['proNom','proApe','proSerCos','serCan'];
 
     const [searchFilter, setSearchFilter] = useState('');
     const filteredData = useMemo(() => 
@@ -261,18 +281,26 @@ const EventDetails = () => {
             (item.tarDes ? item.tarDes.toUpperCase().includes(searchFilter.toUpperCase()) : false)
         ), [tasks, searchFilter]
     );
+    const headersTask = ['NOMBRE','DESCRIPCION','FECHA INICIO','FECHA FIN','RESPONSABLE'];
+    const propertiesTask = ['tarNom','tarDes','tarFecIniPla','tarFecFinPla','tarRes'];
 
     const [searchFilterMaterial, setSearchFilterMaterial] = useState('');
     const filteredDataMaterial = useMemo(() => 
         materials.filter(item => 
             (item.matNom ? item.matNom.toUpperCase().includes(searchFilterMaterial.toUpperCase()) : false) ||
+            (item.matPre ? item.matPre.toUpperCase().includes(searchFilterMaterial.toUpperCase()) : false) ||
+            (item.eveMatCan ? item.eveMatCan.toUpperCase().includes(searchFilterMaterial.toUpperCase()) : false) ||
             (item.matDes ? item.matDes.toUpperCase().includes(searchFilterMaterial.toUpperCase()) : false)
         ), [materials, searchFilterMaterial]
     );
+    const headersMaterial = ['NOMBRE','DESCRIPCION','PRECIO UNITARIO','CANTIDAD'];
+    const propertiesMaterial = ['matNom','matDes','matPre','eveMatCan'];
+
+    const executedBudget = supplierCost + materialCost;
 
     return (
         <>
-            <header className="header-event-info flex flex-column p_5 block-event">
+            <header className="header-event-info flex flex-column p_5">
                 <h2 className="center">Detalles del Evento</h2>
                 <hr className="m0" />
                 <div className="flex ai-center flex-row">
@@ -290,7 +318,13 @@ const EventDetails = () => {
                         <div className="">
                             <p>Presupuesto Ejecutado</p>
                             <p className="flex flex-column">
-                                S/. {event && formatterBudget.format(event.evePreEje)}
+                                S/. {formatterBudget.format(executedBudget)}
+                            </p>
+                        </div>
+                        <div className="">
+                            <p>Tenemos un Saldo de</p>
+                            <p className="flex flex-column">
+                                S/. {event && formatterBudget.format(event.evePrePla - executedBudget)}
                             </p>
                         </div>
                     </div>
@@ -321,6 +355,15 @@ const EventDetails = () => {
                                     </span>
                                 </button>
                             }
+                            <button 
+                                className='button-primary flex jc-space-between Large_3 ai-center gap_5'
+                                onClick={() => Export_Excel(filteredData,headersTask,'TAREAS',propertiesTask)} 
+                            >
+                                Exportar 
+                                <span className='flex f1_25'>
+                                    <ExcelIcon />
+                                </span>
+                            </button>
                         </div>
                         <Table data={filteredData} columns={taskColumns} />
                     </div>
@@ -345,6 +388,15 @@ const EventDetails = () => {
                                     </span>
                                 </button>
                             }
+                             <button 
+                                className='button-primary flex jc-space-between Large_3 ai-center gap_5'
+                                onClick={() => Export_Excel(filteredDataSupplier,headersSupplier,'PROVEEDORES',propertiesSuppler)} 
+                            >
+                                Exportar 
+                                <span className='flex f1_25'>
+                                    <ExcelIcon />
+                                </span>
+                            </button>
                         </div>
                         <Table 
                             data={filteredDataSupplier} 
@@ -370,6 +422,15 @@ const EventDetails = () => {
                                     </span>
                                 </button>
                             }
+                             <button 
+                                className='button-primary flex jc-space-between Large_3 ai-center gap_5'
+                                onClick={() => Export_Excel(filteredDataMaterial,headersMaterial,'MATERIALES',propertiesMaterial)} 
+                            >
+                                Exportar 
+                                <span className='flex f1_25'>
+                                    <ExcelIcon />
+                                </span>
+                            </button>
                         </div>
                         <Table 
                             data={filteredDataMaterial} 

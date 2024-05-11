@@ -12,6 +12,7 @@ namespace events_app.Server.Models
         public String? TarCod { get; set; }
         public String? TarNom { get; set; }
         public String? TarDes { get; set; }
+        public String? TarRes { get; set; }
         public String? TarFecIniPla { get; set; }
         public String? TarFecFinPla { get; set; }
         public String? TarFecIniEje { get; set; }

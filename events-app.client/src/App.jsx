@@ -1,9 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import AuthState from './context/AuthState';
 import Login from './pages/Login/Login';
 import PublicRoute from './router/PublicRoute';
 import PrivateRoute from './router/PrivateRoute';
-import Home from './pages/Home/Home';
 import Layout from './pages/Layout/Layout';
 import Events from './pages/Event/Events';
 import EventDetails from './pages/Event/components/EventDetails';
@@ -12,6 +10,8 @@ import Supplier from './pages/Maintance/Supplier';
 import { AuthContext } from './context/AuthContext';
 import { useContext, useEffect, useState } from 'react';
 import Notiflix from 'notiflix';
+import Service from './pages/Maintance/Service';
+import User from './pages/User/User';
 
 const App = () => {
     const { authActions, authInfo } = useContext(AuthContext);
@@ -55,6 +55,8 @@ const App = () => {
     const componentMap = {
         'material': Material,
         'supplier': Supplier,
+        'service': Service,
+        'user': User,
     };
 
     return (

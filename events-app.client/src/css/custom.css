@@ -24,6 +24,9 @@ a {
 body{
 	font-family: HankenGrotesk;
 }
+.pointer{
+	cursor: pointer;
+}
 .h-100{
 	height: 100vh;
 }
@@ -235,7 +238,9 @@ div[data-active="true"] > div > .arrow_profile {
 .rbc-agenda-date-cell{
   text-transform: capitalize;
 }
-
+.rbc-calendar tr{
+	cursor: pointer;
+}
 
 button{
 	transition: all 0.2s ease-in-out;
@@ -272,6 +277,7 @@ button{
 	background-color: #293241;
 	border: 1px solid #293241;
 	color: var(--palet-c);
+	padding: 0.5rem;
 }
 
 .button-primary:hover{
@@ -353,4 +359,13 @@ button{
 .pagination select{
 	border: 1px solid #F9DED7;
 	border-radius: 5px;
+}
+
+
+.sort-icon{
+	color: var(--palet-b);
+	display: flex;
+	justify-content: center;
+	font-size: 1rem;
+	width: 20px;
 }

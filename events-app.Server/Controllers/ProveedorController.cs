@@ -45,28 +45,28 @@ namespace events_app.Server.Controllers
             return Ok(result);
         }
 
-        // [HttpPost]
-        // public dynamic Insertar(Evento evento)
-        // {
-        //     var identity = HttpContext.User.Identity as ClaimsIdentity;
-        //     var rToken = Jwt.validarToken(identity, _usuarios);
+        [HttpPost]
+        public dynamic Insertar(Proveedor proveedor)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var rToken = Jwt.validarToken(identity, _usuarios);
 
-        //     if (!rToken.success) return rToken;
+            if (!rToken.success) return rToken;
 
-        //     var (ano, cod, message, messageType) = _proveedores.Insertar(identity, evento);
-        //     if (messageType == "1") // Error
-        //     {
-        //         return new BadRequestObjectResult(new { success = false, message });
-        //     }
-        //     else if (messageType == "2") // Registro ya existe
-        //     {
-        //         return new ConflictObjectResult(new { success = false, message });
-        //     }
-        //     else // Registro modificado correctamente
-        //     {
-        //         return new OkObjectResult(new { ano, cod, success = true, message });
-        //     }
-        // }
+            var (ano, cod, message, messageType) = _proveedores.Insertar(identity, proveedor);
+            if (messageType == "1") // Error
+            {
+                return new BadRequestObjectResult(new { success = false, message });
+            }
+            else if (messageType == "2") // Registro ya existe
+            {
+                return new ConflictObjectResult(new { success = false, message });
+            }
+            else // Registro modificado correctamente
+            {
+                return new OkObjectResult(new { ano, cod, success = true, message });
+            }
+        }
 
         [HttpPost]
         [Route("evento")]
@@ -92,28 +92,28 @@ namespace events_app.Server.Controllers
             }
         }
 
-        // [HttpPut]
-        // public dynamic Modificar(Evento evento)
-        // {
-        //     var identity = HttpContext.User.Identity as ClaimsIdentity;
-        //     var rToken = Jwt.validarToken(identity, _usuarios);
+        [HttpPut]
+        public dynamic Modificar(Proveedor proveedor)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var rToken = Jwt.validarToken(identity, _usuarios);
 
-        //     if (!rToken.success) return rToken;
+            if (!rToken.success) return rToken;
 
-        //     var (message, messageType) = _proveedores.Modificar(identity, evento);
-        //     if (messageType == "1") // Error
-        //     {
-        //         return new BadRequestObjectResult(new { success = false, message });
-        //     }
-        //     else if (messageType == "2") // Registro ya existe
-        //     {
-        //         return new ConflictObjectResult(new { success = false, message });
-        //     }
-        //     else // Registro modificado correctamente
-        //     {
-        //         return new OkObjectResult(new { success = true, message });
-        //     }
-        // }
+            var (message, messageType) = _proveedores.Modificar(identity, proveedor);
+            if (messageType == "1") // Error
+            {
+                return new BadRequestObjectResult(new { success = false, message });
+            }
+            else if (messageType == "2") // Registro ya existe
+            {
+                return new ConflictObjectResult(new { success = false, message });
+            }
+            else // Registro modificado correctamente
+            {
+                return new OkObjectResult(new { success = true, message });
+            }
+        }
 
         [HttpDelete]
         [Route("evento")]
@@ -138,28 +138,29 @@ namespace events_app.Server.Controllers
                 return new OkObjectResult(new { success = true, message });
             }
         }
-        // [HttpDelete]
-        // public dynamic Eliminar(Evento evento)
-        // {
-        //     var identity = HttpContext.User.Identity as ClaimsIdentity;
-        //     var rToken = Jwt.validarToken(identity, _usuarios);
 
-        //     if (!rToken.success) return rToken;
+        [HttpDelete]
+        public dynamic Eliminar(Proveedor proveedor)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var rToken = Jwt.validarToken(identity, _usuarios);
 
-        //     var (message, messageType) = _proveedores.Eliminar(identity, evento);
-        //     if (messageType == "1") // Error
-        //     {
-        //         return new BadRequestObjectResult(new { success = false, message });
-        //     }
-        //     else if (messageType == "2") // Registro ya existe
-        //     {
-        //         return new ConflictObjectResult(new { success = false, message });
-        //     }
-        //     else // Registro modificado correctamente
-        //     {
-        //         return new OkObjectResult(new { success = true, message });
-        //     }
-        // }
+            if (!rToken.success) return rToken;
+
+            var (message, messageType) = _proveedores.Eliminar(identity, proveedor);
+            if (messageType == "1") // Error
+            {
+                return new BadRequestObjectResult(new { success = false, message });
+            }
+            else if (messageType == "2") // Registro ya existe
+            {
+                return new ConflictObjectResult(new { success = false, message });
+            }
+            else // Registro modificado correctamente
+            {
+                return new OkObjectResult(new { success = true, message });
+            }
+        }
 
     }
 }

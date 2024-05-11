@@ -5,8 +5,12 @@ import { getColumnsSupplier } from "./columns";
 import Table from "../Event/components/Table";
 import Notiflix from "notiflix";
 import ModalSupplier from "./components/ModalSupplier";
+import { useNavigate } from 'react-router-dom'
+import ExcelIcon from "../../icons/ExcelIcon";
+import { Export_Excel } from "../../helpers/export";
 
 const Supplier = () => {
+    const navigate = useNavigate();
     const [ data, setData ] = useState([])
     const [ dataSelected, setDataSelected ] = useState(null)
     const [ modalOpen, setModalOpen ] = useState(false)
@@ -58,9 +62,13 @@ const Supplier = () => {
     const filteredData = useMemo(() => 
         data.filter(item => 
             (item.proNom ? item.proNom.toUpperCase().includes(searchFilter.toUpperCase()) : false) ||
-            (item.proApe ? item.proApe.toUpperCase().includes(searchFilter.toUpperCase()) : false)
+            (item.proApe ? item.proApe.toUpperCase().includes(searchFilter.toUpperCase()) : false) ||
+            (item.proTel ? item.proTel.toUpperCase().includes(searchFilter.toUpperCase()) : false)
         ), [data, searchFilter]
     );
+
+    const headers = ['NOMBRE','APELLIDO','TELÉFONO','COSTO'];
+    const properties = ['proNom','proApe','proTel','proSerCos'];
 
     return (
         <>
@@ -78,6 +86,15 @@ const Supplier = () => {
                         Añadir 
                         <span className='flex f1_25'>
                             <PlusIcon />
+                        </span>
+                    </button>
+                    <button 
+                        className='button-primary flex jc-space-between Large_3 ai-center gap_5'
+                        onClick={() => Export_Excel(data,headers,'PROVEEDORES',properties)} 
+                    >
+                        Exportar 
+                        <span className='flex f1_25'>
+                            <ExcelIcon />
                         </span>
                     </button>
                 </div>

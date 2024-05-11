@@ -12,7 +12,7 @@ namespace events_app.Server.Models
         public String? ProNom { get; set; }
         public String? ProApe { get; set; }
         public String? ProTel { get; set; }
-        public String? ProPre { get; set; }
+        public String? ProSerCos { get; set; }
         public String? SerCod { get; set; }
         public String? SerNom { get; set; }
         public String? SerDes { get; set; }

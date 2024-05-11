@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Modal from 'react-modal';
 
-const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
+const ModalService = ({modalOpen, closeModal, setRefresh, record }) => {
 
     const init = {
-        proNom: '',
-        proApe: '',
+        serNom: '',
+        serDes: '',
     }
 
     const { 
@@ -27,9 +27,9 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
         if (record) {
             console.log(record)
             // Si estás editando un registro existente, inicializa el formulario con los datos del registro
-            setValue('proNom', record.proNom);
-            setValue('proApe', record.proApe);
-            setValue('proTel', record.proTel);
+            setValue('serCod', record.serCod);
+            setValue('serNom', record.serNom);
+            setValue('serDes', record.serDes);
         } else {
             // Si estás creando un nuevo registro, inicializa el formulario con valores predeterminados
             reset(init);
@@ -43,7 +43,7 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
             const token = localStorage.getItem('token');
             const method = record ? 'PUT' : 'POST';
             console.log(method)
-            const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/Proveedor`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/Servicio`, {
                 method,
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -83,21 +83,21 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
             overlayClassName='modal-fondo'
         >
             <h3 className="center" style={{textTransform: 'capitalize'}}>
-                {record ? 'Editar' : 'Nuevo'} Proveedor
+                {record ? 'Editar' : 'Nuevo'} Servicio
             </h3>
             <form
                 className='p1 flex flex-column gap-1 jc-center ai-center'
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <div>
-                    <label htmlFor="proNom">Nombre:</label>
+                    <label htmlFor="serNom">Nombre:</label>
                     <input
-                        id="proNom"
-                        className={`input-${dirtyFields.proNom || isSubmitted ? (errors.proNom ? 'invalid' : 'valid') : ''}`} 
+                        id="serNom"
+                        className={`input-${dirtyFields.serNom || isSubmitted ? (errors.serNom ? 'invalid' : 'valid') : ''}`} 
                         autoComplete='off'
                         maxLength={10}
-                        placeholder='Ingresa un Nombre para el proveedor'
-                        {...register('proNom', { 
+                        placeholder='Ingresa un Nombre para el material'
+                        {...register('serNom', { 
                             required: 'El campo es obligatorio.',
                             minLength: {
                                 value: 100,
@@ -105,8 +105,8 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
                             }
                         })} 
                     />
-                    {errors.proNom ? (
-                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.proNom.message}</p>
+                    {errors.serNom ? (
+                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.serNom.message}</p>
                     ) : (
                         <p className="Large-f_75 Medium-f1 f_75 message-invalid" style={{ visibility: "hidden" }}>
                             Espacio reservado para el mensaje de error
@@ -114,14 +114,14 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
                     )}
                 </div>
                 <div>
-                    <label htmlFor="proApe">Apellido:</label>
+                    <label htmlFor="serDes">Descripcion:</label>
                     <input
-                        id="proApe"
-                        className={`input-${dirtyFields.proApe || isSubmitted ? (errors.proApe ? 'invalid' : 'valid') : ''}`} 
+                        id="serDes"
+                        className={`input-${dirtyFields.serDes || isSubmitted ? (errors.serDes ? 'invalid' : 'valid') : ''}`} 
                         autoComplete='off'
                         maxLength={10}
-                        placeholder='Ingresa un apellido para el proveedor'
-                        {...register('proApe', { 
+                        placeholder='Ingresa una descripcion para el material'
+                        {...register('serDes', { 
                             required: 'El campo es obligatorio.',
                             minLength: {
                                 value: 100,
@@ -129,35 +129,8 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
                             }
                         })} 
                     />
-                    {errors.proApe ? (
-                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.proApe.message}</p>
-                    ) : (
-                        <p className="Large-f_75 Medium-f1 f_75 message-invalid" style={{ visibility: "hidden" }}>
-                            Espacio reservado para el mensaje de error
-                        </p>
-                    )}
-                </div>
-                <div>
-                    <label htmlFor="proTel">Telefono:</label>
-                    <input
-                        id="proTel"
-                        className={`input-${dirtyFields.proTel || isSubmitted ? (errors.proTel ? 'invalid' : 'valid') : ''}`} 
-                        autoComplete='off'
-                        maxLength={10}
-                        placeholder='Ingresa un apellido para el proveedor'
-                        onInput={(e) => {
-                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                        }}
-                        {...register('proTel', { 
-                            required: 'El campo es obligatorio.',
-                            pattern: {
-                                value: /^(?:[1-9]\d*|)$/,
-                                message: 'Valor no válido',
-                            },
-                        })} 
-                    />
-                    {errors.proTel ? (
-                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.proTel.message}</p>
+                    {errors.serDes ? (
+                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.serDes.message}</p>
                     ) : (
                         <p className="Large-f_75 Medium-f1 f_75 message-invalid" style={{ visibility: "hidden" }}>
                             Espacio reservado para el mensaje de error
@@ -175,4 +148,4 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
     )
 }
 
-export default ModalSupplier
+export default ModalService

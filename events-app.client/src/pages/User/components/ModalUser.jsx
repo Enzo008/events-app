@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Modal from 'react-modal';
 
-const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
+const ModalUser = ({modalOpen, closeModal, setRefresh, record }) => {
 
     const init = {
-        proNom: '',
-        proApe: '',
+        matNom: '',
+        matDes: '',
+        matPre: '',
     }
 
     const { 
@@ -27,9 +28,10 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
         if (record) {
             console.log(record)
             // Si estás editando un registro existente, inicializa el formulario con los datos del registro
-            setValue('proNom', record.proNom);
-            setValue('proApe', record.proApe);
-            setValue('proTel', record.proTel);
+            setValue('matCod', record.matCod);
+            setValue('matNom', record.matNom);
+            setValue('matDes', record.matDes);
+            setValue('matPre', record.matPre);
         } else {
             // Si estás creando un nuevo registro, inicializa el formulario con valores predeterminados
             reset(init);
@@ -43,7 +45,7 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
             const token = localStorage.getItem('token');
             const method = record ? 'PUT' : 'POST';
             console.log(method)
-            const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/Proveedor`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/Material`, {
                 method,
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -83,30 +85,26 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
             overlayClassName='modal-fondo'
         >
             <h3 className="center" style={{textTransform: 'capitalize'}}>
-                {record ? 'Editar' : 'Nuevo'} Proveedor
+                {record ? 'Editar' : 'Nuevo'} Material
             </h3>
             <form
                 className='p1 flex flex-column gap-1 jc-center ai-center'
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <div>
-                    <label htmlFor="proNom">Nombre:</label>
+                    <label htmlFor="matNom">Nombre:</label>
                     <input
-                        id="proNom"
-                        className={`input-${dirtyFields.proNom || isSubmitted ? (errors.proNom ? 'invalid' : 'valid') : ''}`} 
+                        id="matNom"
+                        className={`input-${dirtyFields.matNom || isSubmitted ? (errors.matNom ? 'invalid' : 'valid') : ''}`} 
                         autoComplete='off'
                         maxLength={10}
-                        placeholder='Ingresa un Nombre para el proveedor'
-                        {...register('proNom', { 
+                        placeholder='Ingresa un Nombre para el material'
+                        {...register('matNom', { 
                             required: 'El campo es obligatorio.',
-                            minLength: {
-                                value: 100,
-                                message: 'El campo debe tener minimo 100 caracteres'
-                            }
                         })} 
                     />
-                    {errors.proNom ? (
-                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.proNom.message}</p>
+                    {errors.matNom ? (
+                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.matNom.message}</p>
                     ) : (
                         <p className="Large-f_75 Medium-f1 f_75 message-invalid" style={{ visibility: "hidden" }}>
                             Espacio reservado para el mensaje de error
@@ -114,23 +112,19 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
                     )}
                 </div>
                 <div>
-                    <label htmlFor="proApe">Apellido:</label>
+                    <label htmlFor="matDes">Descripcion:</label>
                     <input
-                        id="proApe"
-                        className={`input-${dirtyFields.proApe || isSubmitted ? (errors.proApe ? 'invalid' : 'valid') : ''}`} 
+                        id="matDes"
+                        className={`input-${dirtyFields.matDes || isSubmitted ? (errors.matDes ? 'invalid' : 'valid') : ''}`} 
                         autoComplete='off'
                         maxLength={10}
-                        placeholder='Ingresa un apellido para el proveedor'
-                        {...register('proApe', { 
+                        placeholder='Ingresa una descripcion para el material'
+                        {...register('matDes', { 
                             required: 'El campo es obligatorio.',
-                            minLength: {
-                                value: 100,
-                                message: 'El campo debe tener minimo 100 caracteres'
-                            }
                         })} 
                     />
-                    {errors.proApe ? (
-                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.proApe.message}</p>
+                    {errors.matDes ? (
+                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.matDes.message}</p>
                     ) : (
                         <p className="Large-f_75 Medium-f1 f_75 message-invalid" style={{ visibility: "hidden" }}>
                             Espacio reservado para el mensaje de error
@@ -138,26 +132,19 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
                     )}
                 </div>
                 <div>
-                    <label htmlFor="proTel">Telefono:</label>
+                    <label htmlFor="matPre">Precio:</label>
                     <input
-                        id="proTel"
-                        className={`input-${dirtyFields.proTel || isSubmitted ? (errors.proTel ? 'invalid' : 'valid') : ''}`} 
+                        id="matPre"
+                        className={`input-${dirtyFields.matPre || isSubmitted ? (errors.matPre ? 'invalid' : 'valid') : ''}`} 
                         autoComplete='off'
                         maxLength={10}
-                        placeholder='Ingresa un apellido para el proveedor'
-                        onInput={(e) => {
-                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                        }}
-                        {...register('proTel', { 
+                        placeholder='Ingresa un precio para el material'
+                        {...register('matPre', { 
                             required: 'El campo es obligatorio.',
-                            pattern: {
-                                value: /^(?:[1-9]\d*|)$/,
-                                message: 'Valor no válido',
-                            },
                         })} 
                     />
-                    {errors.proTel ? (
-                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.proTel.message}</p>
+                    {errors.matPre ? (
+                        <p className="Large-f_75 Medium-f1 f_75 message-invalid">{errors.matPre.message}</p>
                     ) : (
                         <p className="Large-f_75 Medium-f1 f_75 message-invalid" style={{ visibility: "hidden" }}>
                             Espacio reservado para el mensaje de error
@@ -175,4 +162,4 @@ const ModalSupplier = ({modalOpen, closeModal, setRefresh, record }) => {
     )
 }
 
-export default ModalSupplier
+export default ModalUser
